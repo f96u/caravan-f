@@ -1,9 +1,9 @@
-import Image from 'next/image'
+import { Timer } from '@/app/components/Timer'
 
 export default function Home() {
   return (
     <main>
-      Hello, world!
+      <Timer />
     </main>
   )
 }
