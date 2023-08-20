@@ -1,9 +1,9 @@
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Zen_Kaku_Gothic_Antique } from 'next/font/google'
 import './firebaseApp'
 
-const inter = Inter({ subsets: ['latin'] })
+const zenKakuGothicAntique = Zen_Kaku_Gothic_Antique({ weight: '400', subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Caravan',
@@ -17,7 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="jp">
-      <body className={inter.className}>{children}</body>
+      <body className={zenKakuGothicAntique.className}>{children}</body>
     </html>
   )
 }
