@@ -14,10 +14,12 @@ export const Timer = () => {
   const handleStartAndStop = useCallback(() => {
     if (timerId === null) {
       setCount(0)
-      setTimerId(setInterval(() => {
+      const id = setInterval(() => {
         setCount(prev => prev + 1)
-      }, 1000))
+      }, 1000)
+      setTimerId(id)
     } else {
+      // @ts-ignore
       clearInterval(timerId)
       setTimerId(null)
     }
