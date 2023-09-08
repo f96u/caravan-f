@@ -1,19 +1,16 @@
 import { useCallback, useEffect, useState } from 'react'
-import { doc, onSnapshot, runTransaction } from '@firebase/firestore'
+import { doc, onSnapshot, runTransaction, serverTimestamp } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { User } from '@firebase/auth'
 
-// TODO: roomIDを固定値で設定
-const roomId = '8IO7nldb1Zm0IOwQJMYs'
-
-export const useSelectCard = (me: User | null) => {
+export const useSelectCard = (me: User | null, rid: string) => {
   const [selectCardId, setSelectCardId] = useState<null | string>(null)
 
   useEffect(() => {
     if (!me) {
       return
     }
-    const roomDocRef = doc(db, 'room', roomId)
+    const roomDocRef = doc(db, 'room', rid)
     const unsub = onSnapshot(
       roomDocRef,
       docSnap => {
@@ -29,7 +26,7 @@ export const useSelectCard = (me: User | null) => {
       }
     )
     return () => unsub()
-  }, [me])
+  }, [me, rid])
 
   const selected = useCallback(async (id: string) => {
     if (!me) {
@@ -37,20 +34,20 @@ export const useSelectCard = (me: User | null) => {
     }
     try {
       await runTransaction(db, async (transaction) => {
-        const roomDocRef = doc(db, 'room', roomId)
+        const roomDocRef = doc(db, 'room', rid)
         const docSnap = await transaction.get(roomDocRef)
         if (!docSnap.exists()) {
           throw 'Document does not exists!'
         }
-
-        const nextSelectCard = {...docSnap.data().selectCard, [me.uid]: { card: id }}
-        transaction.update(roomDocRef, { selectCard: nextSelectCard })
+        const preData = docSnap.data()
+        const nextSelectCard = {...preData.selectCard, [me.uid]: { card: id }}
+        transaction.update(roomDocRef, { selectCard: nextSelectCard, updatedAt: serverTimestamp() })
       })
     }
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [me])
+  }, [me, rid])
 
   return { selectCardId, selected }
 }
