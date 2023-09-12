@@ -6,10 +6,10 @@ import { useEffect, useState } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import Card from '@/app/planning-poker/[rid]/components/Card'
-import { User } from '@firebase/auth'
+import { useMe } from '@/app/hooks/useMe'
 
 export const PlayField = ({ rid }: { rid: string }) => {
-  const [me, setMe] = useState<User | null>(null)
+  const { me } = useMe()
   const { selectCardId, selected } = useSelectCard(me, rid)
   const router = useRouter()
 

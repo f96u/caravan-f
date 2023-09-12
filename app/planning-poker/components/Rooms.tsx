@@ -1,38 +1,22 @@
 'use client'
-import { useCallback, useEffect, useState } from 'react'
-import { getAuth, onAuthStateChanged, signInAnonymously, User } from '@firebase/auth'
+import { useEffect } from 'react'
 import { useRooms } from '@/app/planning-poker/components/hooks/useRooms'
 import { useRoom } from '@/app/planning-poker/components/hooks/useRoom'
-import { app } from '@/app/firebaseApp'
 import { Button } from '@/app/components/Button'
 import Link from 'next/link'
+import { useMe } from '@/app/hooks/useMe'
 
 export const Rooms = () => {
-  const [me, setMe] = useState<User | null>(null)
+  const { me, signIn } = useMe()
   const { rooms, checkRooms } = useRooms()
   const { createRoom } = useRoom()
 
   useEffect(() => {
     if (me !== null) {
       checkRooms()
-    } else {
-      onAuthStateChanged(getAuth(app), user => {
-        if (user) {
-          setMe(user)
-        }
-      })
     }
-  }, [me, checkRooms])
+  }, [checkRooms, me])
 
-  const signIn = useCallback(() => {
-    signInAnonymously(getAuth())
-      .then(credentials => {
-        setMe(credentials.user)
-      })
-      .catch(error => {
-        console.log(error.code, ': ', error.message)
-      })
-  }, [setMe])
   return (
     <div className="flex flex-col items-center">
       {me === null && (

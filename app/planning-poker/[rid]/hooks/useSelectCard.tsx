@@ -17,9 +17,10 @@ export const useSelectCard = (me: User | null, rid: string) => {
         if (!docSnap.exists()) {
           throw 'Document does not exists!'
         }
-
-        const selectCardId = docSnap.data().selectCard[me.uid].card ?? null
-        setSelectCardId(selectCardId)
+        const selectCard = docSnap.data().selectCard
+        if (me.uid in selectCard) {
+          setSelectCardId(selectCard[me.uid])
+        }
       },
       error => {
         console.error('listen error: ', error)
