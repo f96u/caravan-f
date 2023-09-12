@@ -1,5 +1,6 @@
 'use client'
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
+import { routes } from '@/app/routes'
 
 // NOTE: モバイル用のメニュー表示の高さとして十分に高い数値を指定
 const MOBILE_MENU_HEIGHT_FALL_BACK = 2000
@@ -9,7 +10,7 @@ const getHeight = (elementRef: RefObject<HTMLDivElement>) => {
   return typeof height === 'number' ? height : MOBILE_MENU_HEIGHT_FALL_BACK
 }
 
-export const Navigation = () => {
+export const Navigation = ({ currentPathname }: { currentPathname: string } ) => {
   const [mobileMenuState, setMobileMenuState] = useState({
     show: false,
     enableAnimate: false,
@@ -65,10 +66,16 @@ export const Navigation = () => {
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="hidden sm:ml-6 sm:block">
               <div className="flex space-x-4">
-                <a href="#" className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Dashboard</a>
-                <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Team</a>
-                <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Projects</a>
-                <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white rounded-md px-3 py-2 text-sm font-medium">Calendar</a>
+                {routes.map(route => (
+                  <a
+                    key={route.path}
+                    href={route.path}
+                    className={`rounded-md px-3 py-2 text-sm font-medium ${route.path === currentPathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`}
+                    { ...(route.path === currentPathname ? { "aria-current": "page" } : {}) }
+                  >
+                    {route.name}
+                  </a>
+                ))}
               </div>
             </div>
           </div>
@@ -82,10 +89,16 @@ export const Navigation = () => {
           style={mobileMenuState.show ? { marginTop: 0 } : { marginTop: -(mobileMenuState.height * 0.1) }}
         >
           <div className="space-y-1 px-2 pb-3 pt-2">
-            <a href="#" className="bg-gray-900 text-white block rounded-md px-3 py-2 text-base font-medium" aria-current="page">Dashboard</a>
-            <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Team</a>
-            <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Projects</a>
-            <a href="#" className="text-gray-300 hover:bg-gray-700 hover:text-white block rounded-md px-3 py-2 text-base font-medium">Calendar</a>
+            {routes.map(route => (
+              <a
+                key={route.path}
+                href={route.path}
+                className={`block rounded-md px-3 py-2 text-base font-medium ${route.path === currentPathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`}
+                { ...(route.path === currentPathname ? { "aria-current": "page" } : {}) }
+              >
+                {route.name}
+              </a>
+            ))}
           </div>
         </div>
       </div>
