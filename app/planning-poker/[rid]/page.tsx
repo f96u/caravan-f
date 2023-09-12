@@ -1,7 +1,7 @@
-import PokerTable from '@/app/planning-poker/[rid]/components/PokerTable'
+import { PlayField } from '@/app/planning-poker/[rid]/components/PlayField'
 
 export default function PokerRoom({ params }: { params: { rid: string }}) {
   return (
-    <PokerTable rid={params.rid} />
+    <PlayField rid={params.rid} />
   )
 }
