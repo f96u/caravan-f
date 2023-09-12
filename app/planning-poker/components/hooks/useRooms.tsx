@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { collection, getDocs } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 
 export const useRooms = () => {
   const [rooms, setRooms] = useState<string[]>([])
 
-  useEffect(() => {
+  const checkRooms = useCallback(() => {
     getDocs(collection(db, 'room'))
       .then(querySnapshot => {
         setRooms(querySnapshot.docs.map((doc) => doc.id))
@@ -15,5 +15,5 @@ export const useRooms = () => {
       })
   }, [])
 
-  return { rooms }
+  return { rooms, checkRooms }
 }
