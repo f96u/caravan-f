@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { doc, onSnapshot, runTransaction, serverTimestamp } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { User } from '@firebase/auth'
+import { DocumentData, shapingData } from '@/app/firestore/room/documentData'
 
 export const useSelectCard = (me: User | null, rid: string) => {
   const [selectCardId, setSelectCardId] = useState<null | string>(null)
@@ -17,9 +18,10 @@ export const useSelectCard = (me: User | null, rid: string) => {
         if (!docSnap.exists()) {
           throw 'Document does not exists!'
         }
-        const selectCard = docSnap.data().selectCard
+        const docData = shapingData(docSnap)
+        const selectCard = docData.selectCard
         if (me.uid in selectCard) {
-          setSelectCardId(selectCard[me.uid])
+          setSelectCardId(selectCard[me.uid].card)
         }
       },
       error => {
