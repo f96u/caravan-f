@@ -2,7 +2,7 @@
 
 import { useSelectCard } from '@/app/planning-poker/[rid]/hooks/useSelectCard'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import Card from '@/app/planning-poker/[rid]/components/Card'
