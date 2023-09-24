@@ -1,7 +1,7 @@
 import { DocumentSnapshot, FieldValue, serverTimestamp, Timestamp } from '@firebase/firestore'
 
 export type DocumentData = {
-  selectCard: {
+  player: {
     [key: string]: {
       card: string
     },
@@ -12,14 +12,14 @@ export type DocumentData = {
 }
 
 export const initDocumentData: DocumentData = {
-  selectCard: {},
+  player: {},
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
   version: '23.9.7'
 }
 
-const fallbackData = {
-  selectCard: {},
+const fallbackData: DocumentData = {
+  player: {},
   createdAt: Timestamp.fromDate(new Date()),
   updatedAt: Timestamp.fromDate(new Date()),
   version: 'fallback'

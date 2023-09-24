@@ -1,6 +1,6 @@
 'use client'
 
-import { useSelectCard } from '@/app/planning-poker/[rid]/hooks/useSelectCard'
+import { usePlayer } from '@/app/planning-poker/[rid]/components/hooks/usePlayer'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
@@ -8,10 +8,23 @@ import { db } from '@/app/firebaseApp'
 import Card from '@/app/planning-poker/[rid]/components/Card'
 import { useMe } from '@/app/hooks/useMe'
 
-export const PlayField = ({ rid }: { rid: string }) => {
+export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
-  const { selectCardId, selected } = useSelectCard(me, rid)
+  const { entry, exit, selectCardId, selected } = usePlayer(me, rid)
   const router = useRouter()
+
+  useEffect(() => {
+    entry()
+      .then(() => {
+        // TODO: 部屋に参加しています。の表示を取り除いてカード選択できる表示にする
+      })
+      .catch(error => {
+        // TODO: 部屋への参加ができなかった旨を伝えた上で、トップに戻る
+      })
+    return () => {
+      (async () => await exit())()
+    }
+  }, [entry, exit])
 
   useEffect(() => {
     const docRef = doc(db, 'room', rid)

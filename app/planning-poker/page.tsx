@@ -2,6 +2,7 @@ import React from 'react'
 import { Rooms } from '@/app/planning-poker/components/Rooms'
 import { Navigation } from '@/app/components/Navigation'
 import { routeMap } from '@/app/routes'
+import { ToastProvider } from '@/app/context/ToastContext'
 
 export default function PlanningPoker() {
   return (
