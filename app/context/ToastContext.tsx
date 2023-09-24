@@ -4,7 +4,7 @@ import React, { createContext, useContext, useRef, useState } from 'react'
 import { ToastType } from '@/app/type/ToastType'
 import { Toast } from '@/app/components/Toast'
 
-const DISPLAY_TIME = 500000
+const DISPLAY_TIME = 5000
 
 type ToastContext = {
   showToast: (message: string, type: ToastType) => void

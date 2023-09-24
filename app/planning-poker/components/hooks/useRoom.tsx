@@ -9,9 +9,9 @@ export const useRoom = () => {
   const router = useRouter()
   const { showToast, closeToast } = useToast()
   const createRoom = useCallback(async () => {
-    // const docRef = await addDoc(collection(db, 'room'), initDocumentData)
+    const docRef = await addDoc(collection(db, 'room'), initDocumentData)
     showToast('部屋を作成しました', 'success')
-    // router.push(`/planning-poker/${docRef.id}`)
+    router.push(`/planning-poker/${docRef.id}`)
   }, [router, showToast])
   return { createRoom }
 }
