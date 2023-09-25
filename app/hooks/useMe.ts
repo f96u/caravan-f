@@ -3,10 +3,10 @@ import { getAuth, onAuthStateChanged, signInAnonymously, User } from '@firebase/
 import { app } from '@/app/firebaseApp'
 
 export const useMe = () => {
-  const [me, setMe] = useState<User | null>(null)
+  const [me, setMe] = useState<User | null | undefined>(undefined)
 
   useEffect(() => {
-    if (me !== null) {
+    if (me !== undefined) {
       return
     }
     onAuthStateChanged(getAuth(app), user => {

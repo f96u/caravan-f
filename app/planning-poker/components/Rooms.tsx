@@ -22,7 +22,7 @@ export const Rooms = () => {
     deleteRoom(rid).then(() => removeRoom(rid))
   }, [deleteRoom, removeRoom])
 
-  return (
+  return me !== undefined ? (
     <div className="flex flex-col items-center">
       {me === null && (
         <Button onClick={signIn}>ゲストログイン</Button>
@@ -45,5 +45,5 @@ export const Rooms = () => {
         </>
       )}
     </div>
-  )
+  ) : null
 }
