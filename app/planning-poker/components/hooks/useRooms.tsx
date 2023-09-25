@@ -15,5 +15,9 @@ export const useRooms = () => {
       })
   }, [])
 
-  return { rooms, checkRooms }
+  const removeRoom = useCallback((rid: string) => {
+    setRooms(rooms.filter(room => room !== rid))
+  }, [rooms])
+
+  return { rooms, checkRooms, removeRoom }
 }
