@@ -4,8 +4,8 @@ import { db } from '@/app/firebaseApp'
 import { User } from '@firebase/auth'
 import { DocumentData, shapingData } from '@/app/firestore/room/documentData'
 
-export const usePlayer = (me: User | null, rid: string) => {
-  const [player, setPlayer] = useState<DocumentData['player']>({})
+export const usePlayers = (me: User | null | undefined, rid: string) => {
+  const [players, setPlayers] = useState<DocumentData['players']>({})
 
   // NOTE: カード情報の更新をする
   useEffect(() => {
@@ -20,7 +20,7 @@ export const usePlayer = (me: User | null, rid: string) => {
           throw 'Document does not exists!'
         }
         const docData = shapingData(docSnap)
-        setPlayer(docData.player)
+        setPlayers(docData.players)
       },
       error => {
         console.error('listen error: ', error)
@@ -41,8 +41,8 @@ export const usePlayer = (me: User | null, rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        const nextPlayer = { ...preData.player, [me.uid]: { card: 'none' }}
-        transaction.update(roomDocRef, { player: nextPlayer, updatedAt: serverTimestamp() })
+        const nextPlayers = { ...preData.players, [me.uid]: { card: 'none' }}
+        transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
     catch (error) {
@@ -62,12 +62,12 @@ export const usePlayer = (me: User | null, rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        const nextPlayer = Object.keys(preData.player)
+        const nextPlayers = Object.keys(preData.players)
           .filter(key => key !== me.uid)
           .reduce((obj, key) => {
-            return { ...obj, [key]: preData.player[key]}
-        }, {} as DocumentData['player'])
-        transaction.update(roomDocRef, { player: nextPlayer, updatedAt: serverTimestamp() })
+            return { ...obj, [key]: preData.players[key]}
+        }, {} as DocumentData['players'])
+        transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
     catch (error) {
@@ -76,11 +76,11 @@ export const usePlayer = (me: User | null, rid: string) => {
   }, [me, rid])
 
   const selectCardId = useMemo(() => {
-    if (me !== null && (me.uid in player)) {
-      return player[me.uid]
+    if (!!me && (me.uid in players)) {
+      return players[me.uid]
     }
     return 'none'
-  }, [me, player])
+  }, [me, players])
 
   const selected = useCallback(async (id: string) => {
     if (!me) {
@@ -93,8 +93,8 @@ export const usePlayer = (me: User | null, rid: string) => {
         if (!docSnap.exists()) {
           throw 'Document does not exists!'
         }
-        const nextPlayer = {...docSnap.data().player, [me.uid]: { card: id }}
-        transaction.update(roomDocRef, { player: nextPlayer, updatedAt: serverTimestamp() })
+        const nextPlayers = {...docSnap.data().players, [me.uid]: { card: id }}
+        transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
     catch (error) {
@@ -102,5 +102,5 @@ export const usePlayer = (me: User | null, rid: string) => {
     }
   }, [me, rid])
 
-  return { entry, exit, selectCardId, selected }
+  return { players, entry, exit, selectCardId, selected }
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { usePlayer } from '@/app/planning-poker/[rid]/components/hooks/usePlayer'
+import { usePlayers } from '@/app/planning-poker/[rid]/components/hooks/usePlayers'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
@@ -10,7 +10,7 @@ import { useMe } from '@/app/hooks/useMe'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
-  const { entry, exit, selectCardId, selected } = usePlayer(me, rid)
+  const { players, entry, exit, selectCardId, selected } = usePlayers(me, rid)
   const router = useRouter()
 
   useEffect(() => {
@@ -38,13 +38,18 @@ export const PokerTable = ({ rid }: { rid: string }) => {
   }, [rid, router])
 
   return (
-    <div className="[&>:nth-child(n+2)]:ml-4">
-      {me === null ? 'ログアウト' : 'ログイン'}
-      <Card id="0" selected={selectCardId === "0"} onClick={selected}>0</Card>
-      <Card id="1" selected={selectCardId === "1"} onClick={selected}>1</Card>
-      <Card id="2" selected={selectCardId === "2"} onClick={selected}>2</Card>
-      <Card id="3" selected={selectCardId === "3"} onClick={selected}>3</Card>
-      <Card id="5" selected={selectCardId === "5"} onClick={selected}>5</Card>
-    </div>
+    <>
+      <div className="[&>:nth-child(n+2)]:ml-4">
+        {me === null ? 'ログアウト' : 'ログイン'}
+        <Card id="0" selected={selectCardId === "0"} onClick={selected}>0</Card>
+        <Card id="1" selected={selectCardId === "1"} onClick={selected}>1</Card>
+        <Card id="2" selected={selectCardId === "2"} onClick={selected}>2</Card>
+        <Card id="3" selected={selectCardId === "3"} onClick={selected}>3</Card>
+        <Card id="5" selected={selectCardId === "5"} onClick={selected}>5</Card>
+      </div>
+      {Object.keys(players).map(player => (
+        <div key={player}>player key {player} player card {players[player].card}</div>
+      ))}
+    </>
   )
 }
