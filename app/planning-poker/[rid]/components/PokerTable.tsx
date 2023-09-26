@@ -7,6 +7,8 @@ import { doc, getDoc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import Card from '@/app/planning-poker/[rid]/components/Card'
 import { useMe } from '@/app/hooks/useMe'
+import { PlayersInfo } from '@/app/planning-poker/[rid]/components/PlayersInfo'
+import CardButton from '@/app/planning-poker/[rid]/components/CardButton'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
@@ -39,17 +41,17 @@ export const PokerTable = ({ rid }: { rid: string }) => {
 
   return (
     <>
+      <PlayersInfo players={players} />
       <div className="[&>:nth-child(n+2)]:ml-4">
         {me === null ? 'ログアウト' : 'ログイン'}
-        <Card id="0" selected={selectCardId === "0"} onClick={selected}>0</Card>
-        <Card id="1" selected={selectCardId === "1"} onClick={selected}>1</Card>
-        <Card id="2" selected={selectCardId === "2"} onClick={selected}>2</Card>
-        <Card id="3" selected={selectCardId === "3"} onClick={selected}>3</Card>
-        <Card id="5" selected={selectCardId === "5"} onClick={selected}>5</Card>
+        <CardButton id="0" selected={selectCardId === "0"} onClick={selected}>0</CardButton>
+        <CardButton id="1" selected={selectCardId === "1"} onClick={selected}>1</CardButton>
+        <CardButton id="2" selected={selectCardId === "2"} onClick={selected}>2</CardButton>
+        <CardButton id="3" selected={selectCardId === "3"} onClick={selected}>3</CardButton>
+        <CardButton id="5" selected={selectCardId === "5"} onClick={selected}>5</CardButton>
+        <CardButton id="8" selected={selectCardId === "8"} onClick={selected}>8</CardButton>
+        <CardButton id="13" selected={selectCardId === "13"} onClick={selected}>13</CardButton>
       </div>
-      {Object.keys(players).map(player => (
-        <div key={player}>player key {player} player card {players[player].card}</div>
-      ))}
     </>
   )
 }

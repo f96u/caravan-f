@@ -3,20 +3,15 @@ import 'client-only'
 import { ReactNode, useCallback } from 'react'
 
 type Props = {
-  id: string
   children: ReactNode
-  selected: boolean
-  onClick: (id: string) => void
+  selected?: boolean
 }
-export default function Card({ id, children, selected, onClick }: Props) {
-  const handleClick = useCallback(() => onClick(id), [onClick, id])
-
+export default function Card({ selected, children }: Props) {
   return (
-    <button
-      className={`rounded-md px-4 py-6 text-lg font-semibold shadow-sm border-blue-500 border hover:bg-blue-50 ${selected ? 'bg-blue-500' : 'bg-white '}`}
-      onClick={handleClick}
+    <div
+      className={`rounded-md w-12 h-20 flex justify-center items-center text-lg font-semibold shadow-sm border-blue-500 border hover:bg-blue-50 ${selected ? 'bg-blue-500' : 'bg-white '}`}
     >
       {children}
-    </button>
+    </div>
   )
 }
