@@ -80,7 +80,7 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
 
   const selectCardId = useMemo(() => {
     if (!!me && (me.uid in players)) {
-      return players[me.uid]
+      return players[me.uid].card
     }
     return 'none'
   }, [me, players])
