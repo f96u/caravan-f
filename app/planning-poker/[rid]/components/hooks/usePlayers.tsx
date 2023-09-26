@@ -5,7 +5,7 @@ import { User } from '@firebase/auth'
 import { DocumentData, shapingData } from '@/app/firestore/room/documentData'
 
 export const usePlayers = (me: User | null | undefined, rid: string) => {
-  const [players, setPlayers] = useState<DocumentData['players']>({})
+  const [players, setPlayers] = useState<DocumentData['players'] | undefined>(undefined)
 
   // NOTE: カード情報の更新をする
   useEffect(() => {
@@ -79,7 +79,7 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
   }, [me, rid])
 
   const selectCardId = useMemo(() => {
-    if (!!me && (me.uid in players)) {
+    if (!!me && !!players && (me.uid in players)) {
       return players[me.uid].card
     }
     return 'none'
