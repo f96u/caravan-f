@@ -43,7 +43,6 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     <>
       <PlayersInfo players={players} />
       <div className="[&>:nth-child(n+2)]:ml-4">
-        {me === null ? 'ログアウト' : 'ログイン'}
         <CardButton id="0" selected={selectCardId === "0"} onClick={selected}>0</CardButton>
         <CardButton id="1" selected={selectCardId === "1"} onClick={selected}>1</CardButton>
         <CardButton id="2" selected={selectCardId === "2"} onClick={selected}>2</CardButton>
