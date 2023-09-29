@@ -11,6 +11,10 @@ export type DocumentData = {
   version: string
 }
 
+export const initPlayerState = {
+  card: 'none'
+}
+
 export const initDocumentData: DocumentData = {
   players: {},
   createdAt: serverTimestamp(),
