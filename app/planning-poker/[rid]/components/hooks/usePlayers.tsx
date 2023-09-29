@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { doc, onSnapshot, runTransaction, serverTimestamp } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { User } from '@firebase/auth'
-import { DocumentData, shapingData } from '@/app/firestore/room/documentData'
+import { DocumentData, initPlayerState, shapingData } from '@/app/firestore/room/documentData'
 
 export const usePlayers = (me: User | null | undefined, rid: string) => {
   const [players, setPlayers] = useState<DocumentData['players'] | undefined>(undefined)
@@ -44,7 +44,7 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
         if (me.uid in preData.players) {
           return
         }
-        const nextPlayers = { ...preData.players, [me.uid]: { card: 'none' }}
+        const nextPlayers = { ...preData.players, [me.uid]: initPlayerState}
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
@@ -96,7 +96,8 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
         if (!docSnap.exists()) {
           throw 'Document does not exists!'
         }
-        const nextPlayers = {...docSnap.data().players, [me.uid]: { card: id }}
+        const preData = shapingData(docSnap)
+        const nextPlayers = {...preData.players, [me.uid]: { card: id }}
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
@@ -105,5 +106,28 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     }
   }, [me, rid])
 
-  return { players, entry, exit, selectCardId, selected }
+  const reset = useCallback(async () => {
+    if (!me) {
+      return
+    }
+    try {
+      await runTransaction(db, async (transaction) => {
+        const roomDocRef = doc(db, 'room', rid)
+        const docSnap = await transaction.get(roomDocRef)
+        if (!docSnap.exists()) {
+          throw 'Document does not exists!'
+        }
+        const preData = shapingData(docSnap)
+        const nextPlayers: DocumentData["players"] = Object.keys(preData.players).reduce((acc, cur) => {
+          return { ...acc, [cur]: initPlayerState}
+        }, {})
+        transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
+      })
+    }
+    catch (error) {
+      console.error('Transaction failed: ', error)
+    }
+  }, [me, rid])
+
+  return { players, entry, exit, selectCardId, selected, reset }
 }
