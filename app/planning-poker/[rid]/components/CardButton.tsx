@@ -7,7 +7,7 @@ type Props = {
   id: string
   children: ReactNode
   selected: boolean
-  onClick(id: number): void
+  onClick: (id: string) => void
 }
 export default function CardButton({ id, children, selected, onClick }: Props) {
   const handleClick = useCallback(() => onClick(id), [onClick, id])
