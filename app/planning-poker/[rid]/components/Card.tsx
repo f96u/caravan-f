@@ -1,6 +1,6 @@
 import 'client-only'
 
-import { ReactNode, useCallback } from 'react'
+import { ReactNode } from 'react'
 
 type Props = {
   children: ReactNode

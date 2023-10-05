@@ -6,12 +6,12 @@ import { Toast } from '@/app/components/Toast'
 
 const DISPLAY_TIME = 5000
 
-type ToastContext = {
+type ToastContextType = {
   showToast: (message: string, type: ToastType) => void
   closeToast: () => void
 }
 
-export const ToastContext = createContext<ToastContext>({
+export const ToastContext = createContext<ToastContextType>({
   showToast: () => {},
   closeToast: () => {}
 })

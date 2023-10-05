@@ -9,7 +9,7 @@ type Props = {
 
 export const PlayersInfo = ({ players, isTurnOver }: Props) => {
   return (
-    <div　className="flex justify-center items-center m-1 border rounded-md border-gray-500 p-1 [&>:nth-child(n+2)]:ml-4">
+    <div className="flex justify-center items-center m-1 border rounded-md border-gray-500 p-1 [&>:nth-child(n+2)]:ml-4">
       {players ? Object.keys(players).map(player => (
         <div key={player} className="flex flex-col items-center">
           <Card>{isTurnOver ? players[player].card : "?"}</Card>
