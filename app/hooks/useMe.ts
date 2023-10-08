@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { getAuth, onAuthStateChanged, signInAnonymously, User } from '@firebase/auth'
+import { getAuth, onAuthStateChanged, signInAnonymously, User, signOut as fbSignOut } from '@firebase/auth'
 import { app } from '@/app/firebaseApp'
 
 export const useMe = () => {
@@ -24,5 +24,15 @@ export const useMe = () => {
       })
   }, [setMe])
 
-  return { me, signIn }
+  const signOut = useCallback(() => {
+    fbSignOut(getAuth())
+      .then(() => {
+        setMe(null)
+      })
+      .catch(error => {
+        console.log(error.code, ': ', error.message)
+      })
+  }, [setMe])
+
+  return { me, signIn, signOut }
 }

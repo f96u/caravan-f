@@ -8,7 +8,7 @@ import { useMe } from '@/app/hooks/useMe'
 import { XMark } from '@/app/svg/XMark'
 
 export const Rooms = () => {
-  const { me, signIn } = useMe()
+  const { me, signIn, signOut } = useMe()
   const { rooms, checkRooms, removeRoom } = useRooms()
   const { createRoom, deleteRoom } = useRoom()
 
@@ -26,6 +26,9 @@ export const Rooms = () => {
     <div className="flex flex-col items-center">
       {me === null && (
         <Button onClick={signIn}>ゲストログイン</Button>
+      )}
+      {!!me && (
+        <Button onClick={signOut}>ログアウト</Button>
       )}
       現在のログイン状態:{ me === null ? 'ログアウト中' : `ログイン中: ${me.uid}`}
       {me !== null && (
