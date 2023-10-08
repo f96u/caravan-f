@@ -28,9 +28,18 @@ export const Rooms = () => {
         <Button onClick={signIn}>ゲストログイン</Button>
       )}
       {!!me && (
-        <Button onClick={signOut}>ログアウト</Button>
+        <>
+          <Button onClick={signOut}>ログアウト</Button>
+          <input
+            type="text"
+            name="nickname"
+            id="nickname"
+            autoComplete="nickname"
+            className="block flex-1 border-0 bg-transparent py-1.5 pl-1 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+            placeholder="janesmith"
+          />
+        </>
       )}
-      現在のログイン状態:{ me === null ? 'ログアウト中' : `ログイン中: ${me.uid}`}
       {me !== null && (
         <>
           <button className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" onClick={createRoom}>部屋を作成する</button>

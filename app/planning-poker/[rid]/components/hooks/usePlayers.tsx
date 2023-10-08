@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { doc, onSnapshot, runTransaction, serverTimestamp } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
-import { User } from '@firebase/auth'
 import { DocumentData, initPlayerState, shapingData } from '@/app/firestore/room/documentData'
+import { Me } from '@/app/planning-poker/type/Me'
 
-export const usePlayers = (me: User | null | undefined, rid: string) => {
+export const usePlayers = (me: Me | null | undefined, rid: string) => {
   const [players, setPlayers] = useState<DocumentData['players'] | undefined>(undefined)
 
   // NOTE: カード情報の更新をする
@@ -41,10 +41,10 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        if (me.uid in preData.players) {
+        if (me.user.uid in preData.players) {
           return
         }
-        const nextPlayers = { ...preData.players, [me.uid]: initPlayerState}
+        const nextPlayers = { ...preData.players, [me.user.uid]: initPlayerState}
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
@@ -66,7 +66,7 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
         }
         const preData = shapingData(docSnap)
         const nextPlayers = Object.keys(preData.players)
-          .filter(key => key !== me.uid)
+          .filter(key => key !== me.user.uid)
           .reduce((obj, key) => {
             return { ...obj, [key]: preData.players[key]}
         }, {} as DocumentData['players'])
@@ -79,8 +79,8 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
   }, [me, rid])
 
   const selectCardId = useMemo(() => {
-    if (!!me && !!players && (me.uid in players)) {
-      return players[me.uid].card
+    if (!!me && !!players && (me.user.uid in players)) {
+      return players[me.user.uid].card
     }
     return 'none'
   }, [me, players])
@@ -97,7 +97,7 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        const nextPlayers = {...preData.players, [me.uid]: { card: id }}
+        const nextPlayers = {...preData.players, [me.user.uid]: { card: id }}
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
