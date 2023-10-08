@@ -1,9 +1,10 @@
-import { Timer } from '@/app/components/Timer'
+import { Navigation } from '@/app/components/Navigation'
+import { routeMap } from '@/app/routes'
 
 export default function Home() {
   return (
     <main>
-      <Timer />
+      <Navigation currentPathname={routeMap.top.path} />
     </main>
   )
 }

@@ -7,17 +7,19 @@ const formatTime = (count: number) => {
   return `${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`
 }
 
-export const Timer = () => {
+export const Counter = () => {
   const [timerId, setTimerId] = useState<NodeJS.Timer | null>(null)
   const [count, setCount] = useState(0)
 
   const handleStartAndStop = useCallback(() => {
     if (timerId === null) {
       setCount(0)
-      setTimerId(setInterval(() => {
+      const id = setInterval(() => {
         setCount(prev => prev + 1)
-      }, 1000))
+      }, 1000)
+      setTimerId(id)
     } else {
+      // @ts-ignore
       clearInterval(timerId)
       setTimerId(null)
     }
