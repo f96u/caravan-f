@@ -11,7 +11,7 @@ export const useMe = () => {
       return
     }
     onAuthStateChanged(getAuth(app), user => {
-      user && setMe({ user, nickname: '' })
+      user ?  setMe({ user, nickname: '' }) : setMe(null)
     })
   }, [me])
 
