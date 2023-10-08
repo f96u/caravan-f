@@ -12,27 +12,21 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     if (!me) {
       return
     }
-    // TODO: デザインのためにしばらくモック値を返却する
-    setPlayers({
-      abcdefg: { card: '1' },
-      bcdefgh: { card: '2' },
-      cdefghi: { card: '3' },
-    })
-    // const roomDocRef = doc(db, 'room', rid)
-    // const unsub = onSnapshot(
-    //   roomDocRef,
-    //   docSnap => {
-    //     if (!docSnap.exists()) {
-    //       throw 'Document does not exists!'
-    //     }
-    //     const docData = shapingData(docSnap)
-    //     setPlayers(docData.players)
-    //   },
-    //   error => {
-    //     console.error('listen error: ', error)
-    //   }
-    // )
-    // return () => unsub()
+    const roomDocRef = doc(db, 'room', rid)
+    const unsub = onSnapshot(
+      roomDocRef,
+      docSnap => {
+        if (!docSnap.exists()) {
+          throw 'Document does not exists!'
+        }
+        const docData = shapingData(docSnap)
+        setPlayers(docData.players)
+      },
+      error => {
+        console.error('listen error: ', error)
+      }
+    )
+    return () => unsub()
   }, [me, rid])
 
   const entry = useCallback(async () => {
