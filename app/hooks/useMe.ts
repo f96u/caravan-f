@@ -6,6 +6,7 @@ export const useMe = () => {
   const [me, setMe] = useState<User | null | undefined>(undefined)
 
   useEffect(() => {
+    // NOTE: ログイン状態をチェックする
     if (me !== undefined) {
       return
     }
