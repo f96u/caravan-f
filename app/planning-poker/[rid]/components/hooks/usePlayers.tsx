@@ -6,6 +6,7 @@ import { User } from '@firebase/auth'
 
 export const usePlayers = (me: User | null | undefined, rid: string) => {
   const [players, setPlayers] = useState<DocumentData['players'] | undefined>(undefined)
+  const [isTurnOver, setIsTurnOver] = useState(false)
 
   // NOTE: カード情報の更新をする
   useEffect(() => {
@@ -78,7 +79,7 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     }
   }, [me, rid])
 
-  const selectCardId = useMemo(() => {
+  const myChoiceCard = useMemo(() => {
     if (!!me && !!players && (me.uid in players)) {
       return players[me.uid].card
     }
@@ -127,6 +128,7 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     catch (error) {
       console.error('Transaction failed: ', error)
     }
+    setIsTurnOver(false)
   }, [me, rid])
 
   const setNickname = useCallback(async (nickname: string) => {
@@ -150,5 +152,9 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     }
   }, [me, rid])
 
-  return { players, entry, exit, selectCardId, selected, reset, setNickname }
+  const turnOver = useCallback(() => {
+    setIsTurnOver(true)
+  }, [])
+
+  return { players, entry, exit, myChoiceCard, selected, reset, setNickname, turnOver, isTurnOver }
 }
