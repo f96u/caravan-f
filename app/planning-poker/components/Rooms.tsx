@@ -1,6 +1,5 @@
 'use client'
 import { useCallback, useEffect } from 'react'
-import { useRooms } from '@/app/planning-poker/components/hooks/useRooms'
 import { useRoom } from '@/app/planning-poker/components/hooks/useRoom'
 import { Button } from '@/app/components/Button'
 import Link from 'next/link'
@@ -9,18 +8,17 @@ import { XMark } from '@/app/svg/XMark'
 
 export const Rooms = () => {
   const { me, signIn, signOut } = useMe()
-  const { rooms, checkRooms, removeRoom } = useRooms()
-  const { createRoom, deleteRoom } = useRoom()
+  const { roomList, checkRoom, createRoom, deleteRoom } = useRoom()
 
   useEffect(() => {
     if (me) {
-      checkRooms()
+      checkRoom()
     }
-  }, [checkRooms, me])
+  }, [checkRoom, me])
 
   const delRoom = useCallback((rid: string) => {
-    deleteRoom(rid).then(() => removeRoom(rid))
-  }, [deleteRoom, removeRoom])
+    deleteRoom(rid)
+  }, [deleteRoom])
 
   return me !== undefined ? (
     <div className="flex flex-col items-center">
@@ -33,7 +31,7 @@ export const Rooms = () => {
           <button className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" onClick={createRoom}>部屋を作成する</button>
           <div className="mt-6 border-t border-gray-100">
             <div className="divide-y divide-gray-100">
-              {rooms.map((rid, idx) => (
+              {roomList.map((rid, idx) => (
                 <div key={rid} className="px-4 py-6 sm:grid-cols-3 sm:gap-4 sm:px-0 flex">
                   <span className="mx-4 text-sm font-semibold leading-6 text-gray-900">Room {idx+1}</span>
                   <Link className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0" href={`/planning-poker/${rid}`}>{rid}</Link>
