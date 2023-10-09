@@ -27,11 +27,9 @@ export const Rooms = () => {
       {me === null && (
         <Button onClick={signIn}>ゲストログイン</Button>
       )}
-      {!!me && (
-        <Button onClick={signOut}>ログアウト</Button>
-      )}
       {me !== null && (
         <>
+          <Button onClick={signOut}>ログアウト</Button>
           <button className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50" onClick={createRoom}>部屋を作成する</button>
           <div className="mt-6 border-t border-gray-100">
             <div className="divide-y divide-gray-100">

@@ -1,5 +1,5 @@
 import { routes } from '@/app/routes'
-import { MobileMenu } from '@/app/components/components/MobileMenu'
+import { MobileMenu } from '@/app/components/MobileMenu'
 
 type Props = {
   currentPathname: string
