@@ -9,7 +9,7 @@ type Props = {
 export const Button = ({ onClick, children }: Props) => {
   return (
     <button
-      className="whitespace-nowrap rounded-md border border-purple-200 px-4 py-1 w-fit text-sm font-semibold text-purple-600 hover:border-transparent hover:bg-purple-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-purple-600 focus:ring-offset-2"
+      className="whitespace-nowrap rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       onClick={onClick}
     >
       {children}
