@@ -1,17 +1,20 @@
 import { DocumentSnapshot, FieldValue, serverTimestamp, Timestamp } from '@firebase/firestore'
 
+export type PlayerState = {
+  nickname: string
+  card: string
+}
 export type DocumentData = {
   players: {
-    [key: string]: {
-      card: string
-    },
+    [key: string]: PlayerState,
   },
   createdAt: FieldValue
   updatedAt: FieldValue
   version: string
 }
 
-export const initPlayerState = {
+export const initPlayerState: PlayerState = {
+  nickname: '',
   card: 'none'
 }
 

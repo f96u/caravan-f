@@ -2,7 +2,7 @@
 
 import { usePlayers } from '@/app/planning-poker/[rid]/components/hooks/usePlayers'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { ChangeEventHandler, useCallback, useEffect, useState } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { useMe } from '@/app/hooks/useMe'
@@ -13,10 +13,11 @@ import { useToast } from '@/app/context/ToastContext'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
-  const { players, entry, exit, selectCardId, selected, reset } = usePlayers(me, rid)
+  const { players, entry, exit, selectCardId, selected, reset, setNickname } = usePlayers(me, rid)
   const router = useRouter()
   const [isTurnOver, setIsTurnOver] = useState(false)
   const [isEntered, setIsEntered] = useState(false)
+  const [draftNickname, setDraftNickname] = useState('')
   const { showToast } = useToast()
 
   useEffect(() => {
@@ -56,6 +57,18 @@ export const PokerTable = ({ rid }: { rid: string }) => {
       })
   }, [reset])
 
+  const changeNickname = useCallback((event: React.ChangeEvent<HTMLInputElement> | undefined) => {
+    event && setDraftNickname(event.target.value)
+  }, [])
+
+  const submitNickname = useCallback(() => {
+    setNickname(draftNickname)
+      .then(() => {
+        setDraftNickname('')
+        showToast('ニックネームを変更しました', 'success')
+      })
+  }, [draftNickname, setNickname, showToast])
+
   return isEntered ? (
     <>
       <PlayersInfo players={players} isTurnOver={isTurnOver} />
@@ -70,6 +83,17 @@ export const PokerTable = ({ rid }: { rid: string }) => {
           <CardButton id="21" selected={selectCardId === "21"} onClick={selected}>21</CardButton>
       </div>
       <Button onClick={showdown}>表示</Button><Button onClick={resetPlayers}>リセット</Button>
+      <div className="flex">
+        <input
+          id="nickname"
+          name="nickname"
+          placeholder="ニックネーム"
+          value={draftNickname}
+          onChange={changeNickname}
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        />
+        <Button onClick={submitNickname}>変更</Button>
+      </div>
     </>
   ) : (
     <>入室中...</>

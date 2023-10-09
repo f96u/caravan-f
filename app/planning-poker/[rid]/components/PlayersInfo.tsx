@@ -13,7 +13,7 @@ export const PlayersInfo = ({ players, isTurnOver }: Props) => {
       {players ? Object.keys(players).map(player => (
         <div key={player} className="flex flex-col items-center">
           <Card>{isTurnOver ? players[player].card : "?"}</Card>
-          {player.slice(0, 4)}
+          {`${players[player].nickname}[${player.slice(0, 4)}]`}
         </div>
       )) : <div className="h-20 flex items-center"><Spinner /></div>}
     </div>

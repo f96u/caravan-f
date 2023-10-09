@@ -97,7 +97,7 @@ export const usePlayers = (me: Me | null | undefined, rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        const nextPlayers = {...preData.players, [me.user.uid]: { card: id }}
+        const nextPlayers = {...preData.players, [me.user.uid]: { nickname: preData.players[me.user.uid].nickname, card: id }}
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
@@ -119,7 +119,7 @@ export const usePlayers = (me: Me | null | undefined, rid: string) => {
         }
         const preData = shapingData(docSnap)
         const nextPlayers: DocumentData["players"] = Object.keys(preData.players).reduce((acc, cur) => {
-          return { ...acc, [cur]: initPlayerState}
+          return { ...acc, [cur]: {...initPlayerState, nickname: preData.players[cur].nickname }}
         }, {})
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
@@ -129,5 +129,26 @@ export const usePlayers = (me: Me | null | undefined, rid: string) => {
     }
   }, [me, rid])
 
-  return { players, entry, exit, selectCardId, selected, reset }
+  const setNickname = useCallback(async (nickname: string) => {
+    if (!me) {
+      return
+    }
+    try {
+      await runTransaction(db, async (transaction) => {
+        const roomDocRef = doc(db, 'room', rid)
+        const docSnap = await transaction.get(roomDocRef)
+        if (!docSnap.exists()) {
+          throw 'Document does not exists!'
+        }
+        const preData = shapingData(docSnap)
+        const nextPlayers = {...preData.players, [me.user.uid]: { card: preData.players[me.user.uid].card, nickname }}
+        transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
+      })
+    }
+    catch (error) {
+      console.error('Transaction failed: ', error)
+    }
+  }, [me, rid])
+
+  return { players, entry, exit, selectCardId, selected, reset, setNickname }
 }
