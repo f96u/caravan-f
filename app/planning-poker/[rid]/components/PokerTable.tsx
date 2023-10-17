@@ -59,7 +59,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
       <PlayersInfo players={players} isTurnOver={isTurnOver} />
       <div className="m-1 border border-gray-500 p-1 flex justify-center items-center [&>:nth-child(n+2)]:ml-4">
         {cardIds.map(cardId => (
-          <CardButton key={cardId} id={cardId} selected={myChoiceCard === cardId} onClick={selected}>{cardId}</CardButton>
+          <CardButton key={cardId} id={cardId} selected={myChoiceCard === cardId} isLock={isTurnOver} onClick={selected}>{cardId}</CardButton>
         ))}
       </div>
       <Button onClick={isTurnOver ? reset : turnOver}>{isTurnOver ? 'リセット' : '表示'}</Button>
