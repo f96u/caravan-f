@@ -10,6 +10,7 @@ import { PlayersInfo } from '@/app/planning-poker/[rid]/components/PlayersInfo'
 import CardButton from '@/app/planning-poker/[rid]/components/CardButton'
 import { Button } from '@/app/components/Button'
 import { useToast } from '@/app/context/ToastContext'
+import { cardIds } from '@/app/firestore/room/documentData'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
@@ -57,7 +58,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     <>
       <PlayersInfo players={players} isTurnOver={isTurnOver} />
       <div className="m-1 border border-gray-500 p-1 flex justify-center items-center [&>:nth-child(n+2)]:ml-4">
-        {['0', '1', '2', '3', '5', '8', '13', '21'].map(cardId => (
+        {cardIds.map(cardId => (
           <CardButton key={cardId} id={cardId} selected={myChoiceCard === cardId} onClick={selected}>{cardId}</CardButton>
         ))}
       </div>

@@ -1,8 +1,11 @@
 import { DocumentSnapshot, FieldValue, serverTimestamp, Timestamp } from '@firebase/firestore'
 
+export const cardIds = ['?', '0', '1', '2', '3', '5', '8', '13', '21'] as const
+export type CardId = typeof cardIds[number]
+
 export type PlayerState = {
   nickname: string
-  card: string
+  card: CardId | null
 }
 export type DocumentData = {
   players: {
@@ -15,7 +18,7 @@ export type DocumentData = {
 
 export const initPlayerState: PlayerState = {
   nickname: '',
-  card: 'none'
+  card: null
 }
 
 export const initDocumentData: DocumentData = {
