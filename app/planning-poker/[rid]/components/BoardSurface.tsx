@@ -39,6 +39,7 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton }: Props) => 
   const playerIds = getKeys(players)
   const numPlayer = playerIds.length
   const displayMap = displayMapData[numPlayer]
+  const disabledButton = playerIds.some(pid => players[pid].card === null)
 
   return (
     <>
@@ -76,7 +77,7 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton }: Props) => 
             <PlayerDisplay playerState={players[playerIds[displayMap['G']]]} isTurnOver={isTurnOver} />
           )}
         </div>
-        <div className="flex justify-center"><Button className="w-full" onClick={onActionButton}>{isTurnOver ? 'リセット' : '表示'}</Button></div>
+        <div className="flex justify-center"><Button className="w-full" disabled={disabledButton} onClick={onActionButton}>{isTurnOver ? 'リセット' : '表示'}</Button></div>
         <div className="bg-amber-800">
           {displayMap['I'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['I']]]} isTurnOver={isTurnOver} />
