@@ -6,11 +6,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { useMe } from '@/app/hooks/useMe'
-import { PlayersInfo } from '@/app/planning-poker/[rid]/components/PlayersInfo'
 import CardButton from '@/app/planning-poker/[rid]/components/CardButton'
 import { Button } from '@/app/components/Button'
 import { useToast } from '@/app/context/ToastContext'
 import { cardIds } from '@/app/firestore/room/documentData'
+import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
@@ -56,13 +56,12 @@ export const PokerTable = ({ rid }: { rid: string }) => {
 
   return (
     <>
-      <PlayersInfo players={players} isTurnOver={isTurnOver} />
+      <BoardSurface players={players ?? {}} isTurnOver={isTurnOver} onActionButton={isTurnOver ? reset : turnOver} />
       <div className="m-1 border border-gray-500 p-1 flex justify-center items-center [&>:nth-child(n+2)]:ml-4">
         {cardIds.map(cardId => (
           <CardButton key={cardId} id={cardId} selected={myChoiceCard === cardId} isLock={isTurnOver} onClick={selected}>{cardId}</CardButton>
         ))}
       </div>
-      <Button onClick={isTurnOver ? reset : turnOver}>{isTurnOver ? 'リセット' : '表示'}</Button>
       <div className="flex">
         <input
           id="nickname"
