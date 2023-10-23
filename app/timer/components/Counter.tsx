@@ -26,8 +26,8 @@ export const Counter = () => {
   }, [timerId])
 
   return (
-    <div className="flex items-center flex-col">
-      <p className="text-3xl font-bold p-8">{formatTime(count)}</p>
+    <div className="flex flex-col items-center">
+      <p className="p-8 text-3xl font-bold">{formatTime(count)}</p>
       <Button onClick={handleStartAndStop}>Start and Stop</Button>
     </div>
   )

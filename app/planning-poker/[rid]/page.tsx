@@ -6,7 +6,7 @@ import React from 'react'
 export default function PokerRoom({ params }: { params: { rid: string }}) {
   return (
     <main>
-      <h1 className="text-2xl text-center my-10">ポーカールーム</h1>
+      <h1 className="my-10 text-center text-2xl">ポーカールーム</h1>
       <PokerTable rid={params.rid} />
     </main>
   )

@@ -47,8 +47,8 @@ export const MobileMenu = ({ currentPathname }: Props) => {
   }, [])
 
   return (
-    <div className="absolute sm:hidden w-full">
-      <div className="px-2 inset-y-0 left-0 flex items-center">
+    <div className="absolute w-full sm:hidden">
+      <div className="inset-y-0 left-0 flex items-center px-2">
         <button
           type="button"
           className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -66,9 +66,9 @@ export const MobileMenu = ({ currentPathname }: Props) => {
           </svg>
         </button>
       </div>
-      <div className="relative pointer-events-none">
+      <div className="pointer-events-none relative">
         <div
-          className={`mt-1 absolute w-full bg-gray-800 sm:hidden ${mobileMenuState.enableAnimate ? 'transition-all ease-in delay-5 ' : ' '}${mobileMenuState.show ? 'opacity-100 pointer-events-auto' : `opacity-0 pointer-events-none` }`}
+          className={`absolute mt-1 w-full bg-gray-800 sm:hidden ${mobileMenuState.enableAnimate ? 'delay-5 transition-all ease-in ' : ' '}${mobileMenuState.show ? 'pointer-events-auto opacity-100' : `pointer-events-none opacity-0` }`}
           id="mobile-menu"
           ref={mobileMenuElementRef}
           style={mobileMenuState.show ? { marginTop: 0 } : { marginTop: -(mobileMenuState.height * 0.1) }}

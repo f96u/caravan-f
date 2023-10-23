@@ -32,7 +32,7 @@ export const Rooms = () => {
           <div className="mt-6 border-t border-gray-100">
             <div className="divide-y divide-gray-100">
               {roomList.map((rid, idx) => (
-                <div key={rid} className="px-4 py-6 sm:grid-cols-3 sm:gap-4 sm:px-0 flex">
+                <div key={rid} className="flex px-4 py-6 sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <span className="mx-4 text-sm font-semibold leading-6 text-gray-900">Room {idx+1}</span>
                   <Link className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0" href={`/planning-poker/${rid}`}>{rid}</Link>
                   <button className="ml-auto cursor-pointer" onClick={() => delRoom(rid)}><XMark /></button>

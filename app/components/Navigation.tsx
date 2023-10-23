@@ -8,7 +8,7 @@ type Props = {
 export const Navigation = ({ currentPathname }: Props) => {
   return (
     <nav className="sticky">
-      <div className="bg-gray-800 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl bg-gray-800 sm:px-6 lg:px-8">
         <div className="relative flex h-16 items-center justify-between">
           <MobileMenu currentPathname={currentPathname} />
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
