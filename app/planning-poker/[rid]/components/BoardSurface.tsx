@@ -44,41 +44,41 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton }: Props) => 
   return (
     <>
       <div className={`grid gap-4 mb-4 ${numPlayer % 2 ? 'grid-cols-3' : 'grid-cols-2' }`}>
-        {!!(numPlayer % 2) && <div className="bg-amber-50">
+        {!!(numPlayer % 2) && <div className="min-h-[6rem]">
           {displayMap['A'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['A']]]} isTurnOver={isTurnOver} />
           )}
         </div>}
-        <div className="bg-amber-100">
+        <div className="min-h-[6rem]">
           {displayMap['B'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['B']]]} isTurnOver={isTurnOver} />
           )}
         </div>
-        <div className="bg-amber-200">
+        <div className="min-h-[6rem]">
           {displayMap['C'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['C']]]} isTurnOver={isTurnOver} />
           )}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-amber-300">
+        <div className="min-h-[6rem]">
           {displayMap['D'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['D']]]} isTurnOver={isTurnOver} />
           )}
         </div>
         <div className="bg-indigo-100 p-8 rounded-md flex justify-center items-center text-5xl font-semibold shadow-sm">{isTurnOver ? showdownResult(players) : '?'}</div>
-        <div className="bg-amber-500">
+        <div className="min-h-[6rem]">
           {displayMap['F'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['F']]]} isTurnOver={isTurnOver} />
           )}
         </div>
-        <div className="bg-amber-600">
+        <div className="min-h-[6rem]">
           {displayMap['G'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['G']]]} isTurnOver={isTurnOver} />
           )}
         </div>
-        <div className="flex justify-center"><Button className="w-full" disabled={disabledButton} onClick={onActionButton}>{isTurnOver ? 'リセット' : '表示'}</Button></div>
-        <div className="bg-amber-800">
+        <div className="flex justify-center"><Button className="w-full h-fit" disabled={disabledButton} onClick={onActionButton}>{isTurnOver ? 'リセット' : '表示'}</Button></div>
+        <div className="min-h-[6rem]">
           {displayMap['I'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['I']]]} isTurnOver={isTurnOver} />
           )}
