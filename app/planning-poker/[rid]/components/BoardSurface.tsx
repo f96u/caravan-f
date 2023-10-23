@@ -2,7 +2,8 @@ import { DocumentData, PlayerState } from '@/app/firestore/room/documentData'
 import Card from '@/app/planning-poker/[rid]/components/Card'
 import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
 import { Button } from '@/app/components/Button'
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
+import { useToast } from '@/app/context/ToastContext'
 
 const displayMapData = [
   {},
@@ -33,17 +34,33 @@ type Props = {
   players: DocumentData["players"],
   isTurnOver: boolean
   onActionButton: () => void
+  setNickname: (nickname: string) => Promise<void>
 }
 
-export const BoardSurface = ({ players, isTurnOver, onActionButton }: Props) => {
+export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname }: Props) => {
   const playerIds = getKeys(players)
   const numPlayer = playerIds.length
   const displayMap = displayMapData[numPlayer]
   const disabledButton = playerIds.some(pid => players[pid].card === null)
 
+  const { showToast } = useToast()
+  const [draftNickname, setDraftNickname] = useState('')
+
+  const changeNickname = useCallback((event: React.ChangeEvent<HTMLInputElement> | undefined) => {
+    event && setDraftNickname(event.target.value)
+  }, [])
+
+  const submitNickname = useCallback(() => {
+    setNickname(draftNickname)
+      .then(() => {
+        setDraftNickname('')
+        showToast('ニックネームを変更しました', 'success')
+      })
+  }, [draftNickname, setNickname, showToast])
+
   return (
     <>
-      <div className={`grid gap-4 mb-4 ${numPlayer % 2 ? 'grid-cols-3' : 'grid-cols-2' }`}>
+      <div className={`mb-4 grid gap-4 ${numPlayer % 2 ? 'grid-cols-3' : 'grid-cols-2' }`}>
         {!!(numPlayer % 2) && <div className="min-h-[6rem]">
           {displayMap['A'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['A']]]} isTurnOver={isTurnOver} />
@@ -66,7 +83,9 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton }: Props) => 
             <PlayerDisplay playerState={players[playerIds[displayMap['D']]]} isTurnOver={isTurnOver} />
           )}
         </div>
-        <div className="bg-indigo-100 p-8 rounded-md flex justify-center items-center text-5xl font-semibold shadow-sm">{isTurnOver ? showdownResult(players) : '?'}</div>
+        <div className="flex items-center justify-center rounded-md bg-indigo-100 p-8 text-5xl font-semibold shadow-sm">
+          {isTurnOver ? showdownResult(players) : '?'}
+        </div>
         <div className="min-h-[6rem]">
           {displayMap['F'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['F']]]} isTurnOver={isTurnOver} />
@@ -77,7 +96,22 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton }: Props) => 
             <PlayerDisplay playerState={players[playerIds[displayMap['G']]]} isTurnOver={isTurnOver} />
           )}
         </div>
-        <div className="flex justify-center"><Button className="w-full h-fit" disabled={disabledButton} onClick={onActionButton}>{isTurnOver ? 'リセット' : '表示'}</Button></div>
+        <div className="flex flex-col justify-center gap-2">
+          <Button className="h-fit w-full" disabled={disabledButton} onClick={onActionButton}>
+            {isTurnOver ? 'リセット' : '表示'}
+          </Button>
+          <div className="flex">
+            <input
+              id="nickname"
+              name="nickname"
+              placeholder="ニックネーム"
+              value={draftNickname}
+              onChange={changeNickname}
+              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            />
+            <Button onClick={submitNickname}>変更</Button>
+          </div>
+        </div>
         <div className="min-h-[6rem]">
           {displayMap['I'] !== undefined && (
             <PlayerDisplay playerState={players[playerIds[displayMap['I']]]} isTurnOver={isTurnOver} />

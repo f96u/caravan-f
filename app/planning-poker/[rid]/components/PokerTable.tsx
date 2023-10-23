@@ -16,7 +16,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
   const { players, entry, exit, myChoiceCard, selected, reset, setNickname, turnOver, isTurnOver } = usePlayers(me, rid)
   const router = useRouter()
-  const [draftNickname, setDraftNickname] = useState('')
+
   const { showToast } = useToast()
 
   useEffect(() => {
@@ -42,36 +42,13 @@ export const PokerTable = ({ rid }: { rid: string }) => {
       })
   }, [rid, router])
 
-  const changeNickname = useCallback((event: React.ChangeEvent<HTMLInputElement> | undefined) => {
-    event && setDraftNickname(event.target.value)
-  }, [])
-
-  const submitNickname = useCallback(() => {
-    setNickname(draftNickname)
-      .then(() => {
-        setDraftNickname('')
-        showToast('ニックネームを変更しました', 'success')
-      })
-  }, [draftNickname, setNickname, showToast])
-
   return (
     <>
-      <BoardSurface players={players ?? {}} isTurnOver={isTurnOver} onActionButton={isTurnOver ? reset : turnOver} />
-      <div className="bg-indigo-100 m-1 rounded-md p-1 flex justify-center items-center [&>:nth-child(n+2)]:ml-4">
+      <BoardSurface players={players ?? {}} isTurnOver={isTurnOver} onActionButton={isTurnOver ? reset : turnOver} setNickname={setNickname} />
+      <div className="m-1 flex items-center justify-center rounded-md bg-indigo-100 p-1 [&>:nth-child(n+2)]:ml-4">
         {cardIds.map(cardId => (
           <CardButton key={cardId} id={cardId} selected={myChoiceCard === cardId} isLock={isTurnOver} onClick={selected}>{cardId}</CardButton>
         ))}
-      </div>
-      <div className="flex">
-        <input
-          id="nickname"
-          name="nickname"
-          placeholder="ニックネーム"
-          value={draftNickname}
-          onChange={changeNickname}
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-        />
-        <Button onClick={submitNickname}>変更</Button>
       </div>
     </>
   )
