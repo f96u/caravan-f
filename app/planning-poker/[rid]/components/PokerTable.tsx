@@ -54,12 +54,12 @@ export const PokerTable = ({ rid }: { rid: string }) => {
       })
   }, [rid, router])
 
-  const submitNickname = useCallback((nickname: string) => {
+  const submitNickname = (nickname: string) => {
     return setNickname(nickname)
       .then(() => {
         showToast('ニックネームを変更しました', 'success')
       })
-  }, [setNickname, showToast])
+  }
 
   const handleActionButton = () => {
     if (isTurnOver) {
