@@ -25,10 +25,9 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     selected,
     reset,
     setNickname,
-    turnOver,
-    isTurnOver,
     canTurnOver,
   } = usePlayers(me, rid)
+  const [isTurnOver, setIsTurnOver] = useState(false)
   const router = useRouter()
   const { showToast } = useToast()
 
@@ -62,10 +61,18 @@ export const PokerTable = ({ rid }: { rid: string }) => {
       })
   }, [setNickname, showToast])
 
+  const handleActionButton = () => {
+    if (isTurnOver) {
+      reset().then(r => r && setIsTurnOver(false))
+    } else {
+      setIsTurnOver(true)
+    }
+  }
+
   return (
     <>
       <BoardSurface players={otherPlayers ?? {}} result={showdownResult(players ?? {})} isTurnOver={isTurnOver}>
-        <Button className="h-fit w-full" disabled={canTurnOver} onClick={isTurnOver ? reset : turnOver}>
+        <Button className="h-fit w-full" disabled={canTurnOver} onClick={handleActionButton}>
           {isTurnOver ? 'リセット' : '表示'}
         </Button>
         <Nickname onSubmit={submitNickname} />

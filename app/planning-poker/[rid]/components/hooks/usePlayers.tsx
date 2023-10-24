@@ -7,7 +7,6 @@ import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
 
 export const usePlayers = (me: User | null | undefined, rid: string) => {
   const [players, setPlayers] = useState<DocumentData['players'] | undefined>(undefined)
-  const [isTurnOver, setIsTurnOver] = useState(false)
 
   // NOTE: カード情報の更新をする
   useEffect(() => {
@@ -139,11 +138,11 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
         }, {})
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
+      return 'ok'
     }
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-    setIsTurnOver(false)
   }, [me, rid])
 
   const setNickname = useCallback(async (nickname: string) => {
@@ -170,10 +169,6 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     }
   }, [me, rid])
 
-  const turnOver = useCallback(() => {
-    setIsTurnOver(true)
-  }, [])
-
   const canTurnOver = useMemo(() => {
     if (players === undefined) {
       return false
@@ -182,5 +177,5 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     return playersIds.some(pid => players[pid].card === null)
   }, [players])
 
-  return { players, otherPlayers, entry, exit, myChoiceCard, selected, reset, setNickname, turnOver, canTurnOver, isTurnOver }
+  return { players, otherPlayers, entry, exit, myChoiceCard, selected, reset, setNickname, canTurnOver }
 }
