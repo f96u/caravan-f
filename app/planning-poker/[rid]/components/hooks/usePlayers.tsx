@@ -3,6 +3,7 @@ import { doc, onSnapshot, runTransaction, serverTimestamp } from '@firebase/fire
 import { db } from '@/app/firebaseApp'
 import { DocumentData, initPlayerState, PlayerState, shapingData } from '@/app/firestore/room/documentData'
 import { User } from '@firebase/auth'
+import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
 
 export const usePlayers = (me: User | null | undefined, rid: string) => {
   const [players, setPlayers] = useState<DocumentData['players'] | undefined>(undefined)
@@ -78,6 +79,17 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
       console.error('Transaction failed: ', error)
     }
   }, [me, rid])
+
+  const otherPlayers = useMemo(() => {
+    if (players === undefined) {
+      return undefined
+    }
+    return Object.fromEntries(
+      Object.entries(players)
+        .filter(([pid]) => pid !== me?.uid)
+        .map(([pid, playerState]) => [pid, playerState])
+    )
+  }, [me?.uid, players])
 
   const myChoiceCard: PlayerState["card"] = useMemo(() => {
     if (!!me && !!players && (me.uid in players)) {
@@ -162,5 +174,13 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     setIsTurnOver(true)
   }, [])
 
-  return { players, entry, exit, myChoiceCard, selected, reset, setNickname, turnOver, isTurnOver }
+  const canTurnOver = useMemo(() => {
+    if (players === undefined) {
+      return false
+    }
+    const playersIds = players ? getKeys(players) : []
+    return playersIds.some(pid => players[pid].card === null)
+  }, [players])
+
+  return { players, otherPlayers, entry, exit, myChoiceCard, selected, reset, setNickname, turnOver, canTurnOver, isTurnOver }
 }

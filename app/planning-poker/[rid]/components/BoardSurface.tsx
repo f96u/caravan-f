@@ -1,9 +1,7 @@
 import { DocumentData, PlayerState } from '@/app/firestore/room/documentData'
 import Card from '@/app/planning-poker/[rid]/components/Card'
-import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
-import { Button } from '@/app/components/Button'
-import React, { useCallback, useMemo, useState } from 'react'
-import { useToast } from '@/app/context/ToastContext'
+import React, { useMemo } from 'react'
+import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
 
 const displayMapData = [
   {},
@@ -16,9 +14,6 @@ const displayMapData = [
   { A: 1, B: 0, C: 2, D: 3, F: 4, G: 5, I: 6 },
 ]
 
-const getKeys = <T extends {[key: string]: unknown}>(obj: T): (keyof T)[] => {
-  return Object.keys(obj)
-}
 
 const PlayerDisplay = React.memo<{ playerState: PlayerState, isTurnOver: boolean }>(function Component({ playerState, isTurnOver }) {
   const card = useMemo(() => playerState.card, [playerState.card])
@@ -31,40 +26,16 @@ const PlayerDisplay = React.memo<{ playerState: PlayerState, isTurnOver: boolean
 })
 
 type Props = {
-  players: DocumentData["players"],
-  meUid: string
+  players: DocumentData["players"]
+  result: string
+  children: React.ReactNode
   isTurnOver: boolean
-  onActionButton: () => void
-  setNickname: (nickname: string) => Promise<void>
 }
 
-export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname, meUid }: Props) => {
-  const otherPlayers = useMemo(() => {
-    return Object.fromEntries(
-      Object.entries(players)
-        .filter(([pid]) => pid !== meUid)
-        .map(([pid, playerState]) => [pid, playerState])
-    )
-  }, [meUid, players])
-  const otherPlayerIds = getKeys(otherPlayers)
+export const BoardSurface = ({ players, isTurnOver, result, children }: Props) => {
+  const otherPlayerIds = getKeys(players)
   const numPlayer = otherPlayerIds.length
   const displayMap = displayMapData[numPlayer]
-  const disabledButton = otherPlayerIds.some(pid => players[pid].card === null)
-
-  const { showToast } = useToast()
-  const [draftNickname, setDraftNickname] = useState('')
-
-  const changeNickname = useCallback((event: React.ChangeEvent<HTMLInputElement> | undefined) => {
-    event && setDraftNickname(event.target.value)
-  }, [])
-
-  const submitNickname = useCallback(() => {
-    setNickname(draftNickname)
-      .then(() => {
-        setDraftNickname('')
-        showToast('ニックネームを変更しました', 'success')
-      })
-  }, [draftNickname, setNickname, showToast])
 
   return (
     <>
@@ -92,7 +63,7 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname,
           )}
         </div>
         <div className="flex items-center justify-center rounded-md bg-indigo-100 p-8 text-5xl font-semibold shadow-sm">
-          {isTurnOver ? showdownResult(players) : '?'}
+          {isTurnOver ? result : '?'}
         </div>
         <div className="min-h-[6rem]">
           {displayMap['F'] !== undefined && (
@@ -105,20 +76,7 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname,
           )}
         </div>
         <div className="flex flex-col justify-center gap-2">
-          <Button className="h-fit w-full" disabled={disabledButton} onClick={onActionButton}>
-            {isTurnOver ? 'リセット' : '表示'}
-          </Button>
-          <div className="flex">
-            <input
-              id="nickname"
-              name="nickname"
-              placeholder="ニックネーム"
-              value={draftNickname}
-              onChange={changeNickname}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-            />
-            <Button onClick={submitNickname}>変更</Button>
-          </div>
+          {children}
         </div>
         <div className="min-h-[6rem]">
           {displayMap['I'] !== undefined && (
