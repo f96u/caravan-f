@@ -2,19 +2,28 @@
 
 import { usePlayers } from '@/app/planning-poker/[rid]/components/hooks/usePlayers'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { useMe } from '@/app/hooks/useMe'
 import CardButton from '@/app/planning-poker/[rid]/components/CardButton'
-import { Button } from '@/app/components/Button'
 import { useToast } from '@/app/context/ToastContext'
 import { cardIds } from '@/app/firestore/room/documentData'
 import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
-  const { players, entry, exit, myChoiceCard, selected, reset, setNickname, turnOver, isTurnOver } = usePlayers(me, rid)
+  const {
+    players,
+    entry,
+    exit,
+    myChoiceCard,
+    selected,
+    reset,
+    setNickname,
+    turnOver,
+    isTurnOver
+  } = usePlayers(me, rid)
   const router = useRouter()
 
   const { showToast } = useToast()
@@ -44,7 +53,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
 
   return (
     <>
-      <BoardSurface players={players ?? {}} isTurnOver={isTurnOver} onActionButton={isTurnOver ? reset : turnOver} setNickname={setNickname} />
+      <BoardSurface players={players ?? {}} meUid={me?.uid ?? ''} isTurnOver={isTurnOver} onActionButton={isTurnOver ? reset : turnOver} setNickname={setNickname} />
       <div className="m-1 flex items-center justify-center rounded-md bg-indigo-100 p-1 [&>:nth-child(n+2)]:ml-4">
         {cardIds.map(cardId => (
           <CardButton key={cardId} id={cardId} selected={myChoiceCard === cardId} isLock={isTurnOver} onClick={selected}>{cardId}</CardButton>

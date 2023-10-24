@@ -32,16 +32,24 @@ const PlayerDisplay = React.memo<{ playerState: PlayerState, isTurnOver: boolean
 
 type Props = {
   players: DocumentData["players"],
+  meUid: string
   isTurnOver: boolean
   onActionButton: () => void
   setNickname: (nickname: string) => Promise<void>
 }
 
-export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname }: Props) => {
-  const playerIds = getKeys(players)
-  const numPlayer = playerIds.length
+export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname, meUid }: Props) => {
+  const otherPlayers = useMemo(() => {
+    return Object.fromEntries(
+      Object.entries(players)
+        .filter(([pid]) => pid !== meUid)
+        .map(([pid, playerState]) => [pid, playerState])
+    )
+  }, [meUid, players])
+  const otherPlayerIds = getKeys(otherPlayers)
+  const numPlayer = otherPlayerIds.length
   const displayMap = displayMapData[numPlayer]
-  const disabledButton = playerIds.some(pid => players[pid].card === null)
+  const disabledButton = otherPlayerIds.some(pid => players[pid].card === null)
 
   const { showToast } = useToast()
   const [draftNickname, setDraftNickname] = useState('')
@@ -63,24 +71,24 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname 
       <div className={`mb-4 grid gap-4 ${numPlayer % 2 ? 'grid-cols-3' : 'grid-cols-2' }`}>
         {!!(numPlayer % 2) && <div className="min-h-[6rem]">
           {displayMap['A'] !== undefined && (
-            <PlayerDisplay playerState={players[playerIds[displayMap['A']]]} isTurnOver={isTurnOver} />
+            <PlayerDisplay playerState={players[otherPlayerIds[displayMap['A']]]} isTurnOver={isTurnOver} />
           )}
         </div>}
         <div className="min-h-[6rem]">
           {displayMap['B'] !== undefined && (
-            <PlayerDisplay playerState={players[playerIds[displayMap['B']]]} isTurnOver={isTurnOver} />
+            <PlayerDisplay playerState={players[otherPlayerIds[displayMap['B']]]} isTurnOver={isTurnOver} />
           )}
         </div>
         <div className="min-h-[6rem]">
           {displayMap['C'] !== undefined && (
-            <PlayerDisplay playerState={players[playerIds[displayMap['C']]]} isTurnOver={isTurnOver} />
+            <PlayerDisplay playerState={players[otherPlayerIds[displayMap['C']]]} isTurnOver={isTurnOver} />
           )}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="min-h-[6rem]">
           {displayMap['D'] !== undefined && (
-            <PlayerDisplay playerState={players[playerIds[displayMap['D']]]} isTurnOver={isTurnOver} />
+            <PlayerDisplay playerState={players[otherPlayerIds[displayMap['D']]]} isTurnOver={isTurnOver} />
           )}
         </div>
         <div className="flex items-center justify-center rounded-md bg-indigo-100 p-8 text-5xl font-semibold shadow-sm">
@@ -88,12 +96,12 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname 
         </div>
         <div className="min-h-[6rem]">
           {displayMap['F'] !== undefined && (
-            <PlayerDisplay playerState={players[playerIds[displayMap['F']]]} isTurnOver={isTurnOver} />
+            <PlayerDisplay playerState={players[otherPlayerIds[displayMap['F']]]} isTurnOver={isTurnOver} />
           )}
         </div>
         <div className="min-h-[6rem]">
           {displayMap['G'] !== undefined && (
-            <PlayerDisplay playerState={players[playerIds[displayMap['G']]]} isTurnOver={isTurnOver} />
+            <PlayerDisplay playerState={players[otherPlayerIds[displayMap['G']]]} isTurnOver={isTurnOver} />
           )}
         </div>
         <div className="flex flex-col justify-center gap-2">
@@ -114,7 +122,7 @@ export const BoardSurface = ({ players, isTurnOver, onActionButton, setNickname 
         </div>
         <div className="min-h-[6rem]">
           {displayMap['I'] !== undefined && (
-            <PlayerDisplay playerState={players[playerIds[displayMap['I']]]} isTurnOver={isTurnOver} />
+            <PlayerDisplay playerState={players[otherPlayerIds[displayMap['I']]]} isTurnOver={isTurnOver} />
           )}
         </div>
       </div>

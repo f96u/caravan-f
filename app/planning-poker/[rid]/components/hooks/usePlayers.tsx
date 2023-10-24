@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { doc, onSnapshot, runTransaction, serverTimestamp } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
-import { DocumentData, initPlayerState, shapingData } from '@/app/firestore/room/documentData'
+import { DocumentData, initPlayerState, PlayerState, shapingData } from '@/app/firestore/room/documentData'
 import { User } from '@firebase/auth'
 
 export const usePlayers = (me: User | null | undefined, rid: string) => {
@@ -79,11 +79,11 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     }
   }, [me, rid])
 
-  const myChoiceCard = useMemo(() => {
+  const myChoiceCard: PlayerState["card"] = useMemo(() => {
     if (!!me && !!players && (me.uid in players)) {
       return players[me.uid].card
     }
-    return 'none'
+    return null
   }, [me, players])
 
   const selected = useCallback(async (id: string) => {
@@ -98,7 +98,10 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        const nextPlayers = {...preData.players, [me.uid]: { nickname: preData.players[me.uid].nickname, card: id }}
+        const nextPlayers = {
+          ...preData.players,
+          [me.uid]: { nickname: preData.players[me.uid].nickname, card: id }
+        }
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
@@ -143,7 +146,10 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        const nextPlayers = {...preData.players, [me.uid]: { card: preData.players[me.uid].card, nickname }}
+        const nextPlayers = {
+          ...preData.players,
+          [me.uid]: { card: preData.players[me.uid].card, nickname }
+        }
         transaction.update(roomDocRef, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
