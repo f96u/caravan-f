@@ -2,7 +2,7 @@
 
 import { usePlayers } from '@/app/planning-poker/[rid]/components/hooks/usePlayers'
 import { useRouter } from 'next/navigation'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { useMe } from '@/app/hooks/useMe'
