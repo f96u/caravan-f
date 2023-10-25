@@ -41,7 +41,7 @@ export const Nickname = ({ nickname, onSubmit }: Props) => {
         </>
       ) : (
         <div className="flex h-[40px] w-full gap-1">
-          <div className="flex h-fit grow cursor-pointer items-center border-b-2 border-b-indigo-600 p-1 hover:border-b-indigo-200" onClick={handleEdit}>
+          <div className="flex h-fit grow cursor-pointer items-center border-b-2 border-b-indigo-600 p-1 hover:border-b-indigo-500" onClick={handleEdit}>
             {nickname === '' ? 'NOT NAME' : nickname}
           </div>
         </div>
