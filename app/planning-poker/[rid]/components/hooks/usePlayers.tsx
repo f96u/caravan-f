@@ -90,11 +90,12 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     )
   }, [me?.uid, players])
 
-  const myChoiceCard: PlayerState["card"] = useMemo(() => {
+  const myPlayerState: PlayerState = useMemo(() => {
     if (!!me && !!players && (me.uid in players)) {
-      return players[me.uid].card
+      return players[me.uid]
     }
-    return null
+    // NOTE: ロジック上、ここに処理はこないが型を合わせるためにinitPlayerStateを置く
+    return initPlayerState
   }, [me, players])
 
   const selected = useCallback(async (id: string) => {
@@ -177,5 +178,5 @@ export const usePlayers = (me: User | null | undefined, rid: string) => {
     return playersIds.some(pid => players[pid].card === null)
   }, [players])
 
-  return { players, otherPlayers, entry, exit, myChoiceCard, selected, reset, setNickname, canTurnOver }
+  return { players, otherPlayers, entry, exit, myPlayerState, selected, reset, setNickname, canTurnOver }
 }

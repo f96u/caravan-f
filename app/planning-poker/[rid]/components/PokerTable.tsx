@@ -21,7 +21,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     otherPlayers,
     entry,
     exit,
-    myChoiceCard,
+    myPlayerState,
     selected,
     reset,
     setNickname,
@@ -75,11 +75,11 @@ export const PokerTable = ({ rid }: { rid: string }) => {
         <Button className="h-fit w-full" disabled={canTurnOver} onClick={handleActionButton}>
           {isTurnOver ? 'リセット' : '表示'}
         </Button>
-        <Nickname onSubmit={submitNickname} />
+        <Nickname nickname={myPlayerState.nickname} onSubmit={submitNickname} />
       </BoardSurface>
       <div className="m-1 flex items-center justify-center rounded-md bg-indigo-100 p-1 [&>:nth-child(n+2)]:ml-4">
         {cardIds.map(cardId => (
-          <CardButton key={cardId} id={cardId} selected={myChoiceCard === cardId} isLock={isTurnOver} onClick={selected}>{cardId}</CardButton>
+          <CardButton key={cardId} id={cardId} selected={myPlayerState.card === cardId} isLock={isTurnOver} onClick={selected}>{cardId}</CardButton>
         ))}
       </div>
     </>
