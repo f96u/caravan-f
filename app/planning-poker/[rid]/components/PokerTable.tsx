@@ -6,13 +6,12 @@ import React, { useEffect, useState } from 'react'
 import { doc, getDoc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { useMe } from '@/app/hooks/useMe'
-import CardButton from '@/app/planning-poker/[rid]/components/CardButton'
 import { useToast } from '@/app/context/ToastContext'
-import { cardIds } from '@/app/firestore/room/documentData'
 import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
 import { Button } from '@/app/components/Button'
 import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
 import { Nickname } from '@/app/planning-poker/[rid]/components/Nickname'
+import { PocketCards } from '@/app/planning-poker/[rid]/components/PocketCards'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const { me } = useMe()
@@ -77,11 +76,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
         </Button>
         <Nickname nickname={myPlayerState.nickname} onSubmit={submitNickname} />
       </BoardSurface>
-      <div className="m-1 flex flex-wrap items-center justify-center gap-2 rounded-md bg-indigo-100 p-3">
-        {cardIds.map(cardId => (
-          <CardButton key={cardId} id={cardId} selected={myPlayerState.card === cardId} isLock={isTurnOver} onClick={selected}>{cardId}</CardButton>
-        ))}
-      </div>
+      <PocketCards isTurnOver={isTurnOver} selectCardId={myPlayerState.card} onClick={selected} />
     </>
   )
 }
