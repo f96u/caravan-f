@@ -31,7 +31,7 @@ export const PlayerDisplay = ({ players, mapping, isTurnOver }: Props) => {
   const playerState = players[otherPlayerIds[elementNum]]
   const card = playerState.card
 
-  return displayMap[mapping] ? (
+  return displayMap[mapping] !== undefined ? (
     <div className="flex flex-col items-center">
       <Card selected={!!card}>{isTurnOver ? card : "?"}</Card>
       {playerState.nickname !== '' ? playerState.nickname : 'NOT NAME'}

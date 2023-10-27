@@ -12,7 +12,6 @@ type Props = {
 
 export const BoardSurface = ({ players, isTurnOver, result, children }: Props) => {
   const numPlayer = getKeys(players).length
-
   return (
     <>
       <div className={`mb-4 grid gap-4 ${numPlayer % 2 ? 'grid-cols-3' : 'grid-cols-2' }`}>
