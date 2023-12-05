@@ -1,9 +1,9 @@
 'use client'
 
-import { usePlayers } from '@/app/planning-poker/[rid]/components/hooks/usePlayers'
+import { useRoom } from '@/app/planning-poker/[rid]/components/hooks/useRoom'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-import { doc, getDoc } from '@firebase/firestore'
+import React, { useEffect, useRef, useState } from 'react'
+import { doc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { useMe } from '@/app/hooks/useMe'
 import { useToast } from '@/app/context/ToastContext'
@@ -12,37 +12,35 @@ import { Button } from '@/app/components/Button'
 import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
 import { Nickname } from '@/app/planning-poker/[rid]/components/Nickname'
 import { PocketCards } from '@/app/planning-poker/[rid]/components/PocketCards'
+import { useFirestore } from '@/app/hooks/useFirestore'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
+  const ridRef = useRef(rid)
+  const { getDoc } = useFirestore()
   const { me } = useMe()
   const {
-    players,
-    otherPlayers,
+    room,
+    playerStateWithoutMe,
     entry,
     exit,
     myPlayerState,
-    selected,
-    reset,
+    selectCard,
+    showdown,
+    resetGame,
     setNickname,
     canTurnOver,
-  } = usePlayers(me, rid)
+  } = useRoom(me, ridRef.current)
   const [isTurnOver, setIsTurnOver] = useState(false)
   const router = useRouter()
   const { showToast } = useToast()
+  const initRef = useRef(false)
 
+  // NOTE: 初期化
   useEffect(() => {
-    entry()
-      .catch(error => {
-        showToast('入室できませんでした', 'error')
-        router.replace('/planning-poker')
-        console.error(error)
-      })
-    return () => {
-      (async () => await exit())()
+    if (initRef.current) {
+      return
     }
-  }, [entry, exit, router, showToast])
-
-  useEffect(() => {
+    //NOTE: 部屋の存在チェック
     const docRef = doc(db, 'room', rid)
     getDoc(docRef)
       .then(docSnap => {
@@ -51,7 +49,23 @@ export const PokerTable = ({ rid }: { rid: string }) => {
           router.replace('/planning-poker')
         }
       })
-  }, [rid, router])
+    //NOTE: 部屋に入室する
+    entry()
+      .catch(error => {
+        showToast('入室できませんでした', 'error')
+        router.replace('/planning-poker')
+        console.error(error)
+      })
+    initRef.current = true
+    return () => {
+      (async () => await exit())()
+    }
+  }, [entry, exit, getDoc, rid, router, showToast])
+
+  // NOTE: 他のプレイヤーがshowdownした際の処理
+  useEffect(() => {
+    // setIsTurnOver(!!room?.showdown)
+  }, [room?.showdown])
 
   const submitNickname = (nickname: string) => {
     return setNickname(nickname)
@@ -62,21 +76,21 @@ export const PokerTable = ({ rid }: { rid: string }) => {
 
   const handleActionButton = () => {
     if (isTurnOver) {
-      reset().then(r => r && setIsTurnOver(false))
+      resetGame().then(r => r && setIsTurnOver(false))
     } else {
-      setIsTurnOver(true)
+      showdown().then(r => r && setIsTurnOver(true))
     }
   }
 
   return (
     <>
-      <BoardSurface players={otherPlayers ?? {}} result={showdownResult(players ?? {})} isTurnOver={isTurnOver}>
+      <BoardSurface players={playerStateWithoutMe ?? {}} result={showdownResult(room?.players ?? {})} isTurnOver={isTurnOver}>
         <Button className="h-fit w-full" disabled={canTurnOver} onClick={handleActionButton}>
           {isTurnOver ? 'リセット' : '表示'}
         </Button>
         <Nickname nickname={myPlayerState.nickname} onSubmit={submitNickname} />
       </BoardSurface>
-      <PocketCards isTurnOver={isTurnOver} selectCardId={myPlayerState.card} onClick={selected} />
+      <PocketCards isTurnOver={isTurnOver} selectCardId={myPlayerState.card} onClick={selectCard} />
     </>
   )
 }

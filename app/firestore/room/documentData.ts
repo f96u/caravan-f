@@ -11,6 +11,7 @@ export type DocumentData = {
   players: {
     [key: string]: PlayerState,
   },
+  showdown: boolean
   createdAt: FieldValue
   updatedAt: FieldValue
   version: string
@@ -23,13 +24,15 @@ export const initPlayerState: PlayerState = {
 
 export const initDocumentData: DocumentData = {
   players: {},
+  showdown: false,
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
-  version: '23.9.7'
+  version: '23.10.27'
 }
 
 const fallbackData: DocumentData = {
   players: {},
+  showdown: false,
   createdAt: Timestamp.fromDate(new Date()),
   updatedAt: Timestamp.fromDate(new Date()),
   version: 'fallback'
@@ -37,9 +40,11 @@ const fallbackData: DocumentData = {
 
 export const shapingData = (docSnap: DocumentSnapshot): DocumentData => {
   const docData = docSnap.data()
-  if (docData === undefined || docData.version !== '23.9.7') {
-    return fallbackData
-  } else {
-    return <DocumentData>{ ...fallbackData, ...docData }
+  switch(docData?.version) {
+    case '23.9.7':
+    case '23.10.27':
+      return <DocumentData>{ ...fallbackData, ...docData }
+    default:
+      return fallbackData
   }
 }

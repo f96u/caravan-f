@@ -1,20 +1,25 @@
-import { useCallback, useMemo, useState } from 'react'
-import { addDoc, collection, deleteDoc, doc, getDocs } from '@firebase/firestore'
+import { useCallback, useState } from 'react'
+import { collection, doc } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
 import { useRouter } from 'next/navigation'
 import { initDocumentData } from '@/app/firestore/room/documentData'
 import { useToast } from '@/app/context/ToastContext'
+import { useFirestore } from '@/app/hooks/useFirestore'
 
 export const useRoom = () => {
+  const { addDoc, deleteDoc, getDocs } = useFirestore()
   const [roomList, setRoomList] = useState<string[]>([])
   const router = useRouter()
   const { showToast } = useToast()
 
   const createRoom = useCallback(async () => {
     const docRef = await addDoc(collection(db, 'room'), initDocumentData)
+    if (!docRef) {
+      return
+    }
     showToast('部屋を作成しました', 'success')
     router.push(`/planning-poker/${docRef.id}`)
-  }, [router, showToast])
+  }, [addDoc, router, showToast])
 
   const deleteRoom = useCallback(async (rid: string) => {
     deleteDoc(doc(db, 'room', rid))
