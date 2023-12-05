@@ -23,7 +23,6 @@ export const useFirestore = () => {
   const [count, setCount] = useState(0)
 
   const canConnect = useCallback(() => {
-    console.log('CB:' + count)
     if (count > BREAK_COUNT) {
       console.error('Circuit breaker')
       setCircuitBreak(true)
