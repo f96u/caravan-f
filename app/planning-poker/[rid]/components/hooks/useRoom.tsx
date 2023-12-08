@@ -6,17 +6,12 @@ import { DocumentData, initPlayerState, PlayerState, shapingData } from '@/app/f
 import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
 import { useFirestore } from '@/app/hooks/useFirestore'
 
-export const useRoom = (me: User | null | undefined, rid: string) => {
+export const useRoom = (rid: string) => {
   const { runTransaction } = useFirestore()
   const [room, setRoom] = useState<DocumentData | undefined>(undefined)
   const roomDocRef = useRef(doc(db, 'room', rid))
 
-  // NOTE: Room情報をサブスクリプション開始
-  useEffect(() => {
-    if (!me) {
-      return
-    }
-
+  const startRoomSubscription = useCallback(() => {
     const unsub = onSnapshot(
       roomDocRef.current,
       docSnap => {
@@ -28,39 +23,34 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
       }
     )
     return () => unsub()
-  }, [me, rid])
+  }, [])
 
   const players = useMemo(() => {
-    return room?.players
+    return room?.players || {}
   }, [room?.players])
 
-  const entry = useCallback(async () => {
-    if (!me) {
-      return
-    }
+  const entry = useCallback(async (uid: string) => {
     try {
       await runTransaction(async (transaction) => {
         const docSnap = await transaction.get(roomDocRef.current)
         if (!docSnap.exists()) {
-          throw 'Document does not exists!'
+
+          console.error('Document does not exists!')
         }
         const preData = shapingData(docSnap)
-        if (me.uid in preData.players) {
+        if (uid in preData.players) {
           return
         }
-        const nextPlayers = { ...preData.players, [me.uid]: initPlayerState}
+        const nextPlayers = { ...preData.players, [uid]: initPlayerState}
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [me, runTransaction])
+  }, [runTransaction])
 
-  const exit = useCallback(async () => {
-    if (!me) {
-      return
-    }
+  const exit = useCallback(async (uid: string) => {
     try {
       await runTransaction(async (transaction) => {
         const docSnap = await transaction.get(roomDocRef.current)
@@ -69,7 +59,7 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
         }
         const preData = shapingData(docSnap)
         const nextPlayers = Object.keys(preData.players)
-          .filter(key => key !== me.uid)
+          .filter(key => key !== uid)
           .reduce((obj, key) => {
             return { ...obj, [key]: preData.players[key]}
           }, {} as DocumentData['players'])
@@ -79,31 +69,28 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [me, runTransaction])
+  }, [runTransaction])
 
-  const playerStateWithoutMe = useMemo(() => {
+  const playerStateWithoutMe = useCallback((uid: string) => {
     if (players === undefined) {
       return undefined
     }
     return Object.fromEntries(
       Object.entries(players)
-        .filter(([pid]) => pid !== me?.uid)
+        .filter(([pid]) => pid !== uid)
         .map(([pid, playerState]) => [pid, playerState])
     )
-  }, [me?.uid, players])
+  }, [players])
 
-  const myPlayerState: PlayerState = useMemo(() => {
-    if (!!me && !!players && (me.uid in players)) {
-      return players[me.uid]
+  const myPlayerState = useCallback((uid: string): PlayerState => {
+    if (uid in players) {
+      return players[uid]
     }
     // NOTE: ロジック上、ここに処理はこないが型を合わせるためにinitPlayerStateを置く
     return initPlayerState
-  }, [me, players])
+  }, [players])
 
-  const selectCard = useCallback(async (id: string) => {
-    if (!me) {
-      return
-    }
+  const selectCard = useCallback(async (uid: string, cardId: string) => {
     try {
       await runTransaction(async (transaction) => {
         const docSnap = await transaction.get(roomDocRef.current)
@@ -113,7 +100,7 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
         const preData = shapingData(docSnap)
         const nextPlayers = {
           ...preData.players,
-          [me.uid]: { nickname: preData.players[me.uid].nickname, card: id }
+          [uid]: { nickname: preData.players[uid].nickname, card: cardId }
         }
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
@@ -121,13 +108,9 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [me, runTransaction])
+  }, [runTransaction])
 
   const showdown = useCallback(async () => {
-    if (!me) {
-      return
-    }
-
     try {
       await runTransaction(async (transaction) => {
         const docSnap = await transaction.get(roomDocRef.current)
@@ -142,12 +125,9 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [me, runTransaction])
+  }, [runTransaction])
 
   const resetGame = useCallback(async () => {
-    if (!me) {
-      return
-    }
     try {
       await runTransaction(async (transaction) => {
         const docSnap = await transaction.get(roomDocRef.current)
@@ -165,12 +145,9 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [me, runTransaction])
+  }, [runTransaction])
 
-  const setNickname = useCallback(async (nickname: string) => {
-    if (!me) {
-      return
-    }
+  const setNickname = useCallback(async (uid: string, nickname: string) => {
     try {
       await runTransaction(async (transaction) => {
         const docSnap = await transaction.get(roomDocRef.current)
@@ -180,7 +157,7 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
         const preData = shapingData(docSnap)
         const nextPlayers = {
           ...preData.players,
-          [me.uid]: { card: preData.players[me.uid].card, nickname }
+          [uid]: { card: preData.players[uid].card, nickname }
         }
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
       })
@@ -188,7 +165,7 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [me, runTransaction])
+  }, [runTransaction])
 
   const canTurnOver = useMemo(() => {
     if (players === undefined) {
@@ -199,6 +176,7 @@ export const useRoom = (me: User | null | undefined, rid: string) => {
   }, [players])
 
   return {
+    startRoomSubscription,
     room,
     entry,
     exit,

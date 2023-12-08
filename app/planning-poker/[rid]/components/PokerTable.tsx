@@ -19,6 +19,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
   const { getDoc } = useFirestore()
   const { me } = useMe()
   const {
+    startRoomSubscription,
     room,
     playerStateWithoutMe,
     entry,
@@ -29,14 +30,14 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     resetGame,
     setNickname,
     canTurnOver,
-  } = useRoom(me, ridRef.current)
+  } = useRoom(ridRef.current)
   const [isTurnOver, setIsTurnOver] = useState(false)
   const router = useRouter()
   const { showToast } = useToast()
   const initRef = useRef(false)
 
-  // NOTE: 初期化
   useEffect(() => {
+    // NOTE: 初期化
     if (initRef.current) {
       return
     }
@@ -49,8 +50,18 @@ export const PokerTable = ({ rid }: { rid: string }) => {
           router.replace('/planning-poker')
         }
       })
+  }, [entry, exit, getDoc, rid, router, showToast])
+
+  useEffect(() => {
     //NOTE: 部屋に入室する
-    entry()
+    if (!me) {
+      return
+    }
+    entry(me.uid)
+      .then(() => {
+        // NOTE: 情報のサブクス開始
+        startRoomSubscription()
+      })
       .catch(error => {
         showToast('入室できませんでした', 'error')
         router.replace('/planning-poker')
@@ -58,20 +69,26 @@ export const PokerTable = ({ rid }: { rid: string }) => {
       })
     initRef.current = true
     return () => {
-      (async () => await exit())()
+      (async () => await exit(me.uid))()
     }
-  }, [entry, exit, getDoc, rid, router, showToast])
+  }, [entry, exit, me, router, showToast])
 
-  // NOTE: 他のプレイヤーがshowdownした際の処理
   useEffect(() => {
-    // setIsTurnOver(!!room?.showdown)
+    // NOTE: 他のプレイヤーがshowdownした際の処理
+    setIsTurnOver(!!room?.showdown)
   }, [room?.showdown])
 
-  const submitNickname = (nickname: string) => {
-    return setNickname(nickname)
-      .then(() => {
-        showToast('ニックネームを変更しました', 'success')
-      })
+  const submitNickname = async (nickname: string) => {
+    if (!me) {
+      return
+    }
+    try {
+      await setNickname(me.uid, nickname)
+      showToast('ニックネームを変更しました', 'success')
+    } catch (e) {
+      console.error(e)
+      showToast('ニックネームを変更できませんでした', 'error')
+    }
   }
 
   const handleActionButton = () => {
@@ -82,15 +99,15 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     }
   }
 
-  return (
+  return me ? (
     <>
-      <BoardSurface players={playerStateWithoutMe ?? {}} result={showdownResult(room?.players ?? {})} isTurnOver={isTurnOver}>
+      <BoardSurface players={playerStateWithoutMe(me.uid) ?? {}} result={showdownResult(room?.players ?? {})} isTurnOver={isTurnOver}>
         <Button className="h-fit w-full" disabled={canTurnOver} onClick={handleActionButton}>
           {isTurnOver ? 'リセット' : '表示'}
         </Button>
-        <Nickname nickname={myPlayerState.nickname} onSubmit={submitNickname} />
+        <Nickname nickname={myPlayerState(me.uid).nickname} onSubmit={submitNickname} />
       </BoardSurface>
-      <PocketCards isTurnOver={isTurnOver} selectCardId={myPlayerState.card} onClick={selectCard} />
+      <PocketCards isTurnOver={isTurnOver} selectCardId={myPlayerState(me.uid).card} onClick={cid => selectCard(me.uid, cid)} />
     </>
-  )
+  ) : null
 }
