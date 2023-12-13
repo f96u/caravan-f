@@ -3,8 +3,6 @@
 import { useRoom } from '@/app/planning-poker/[rid]/components/hooks/useRoom'
 import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
-import { doc } from '@firebase/firestore'
-import { db } from '@/app/firebaseApp'
 import { useMe } from '@/app/hooks/useMe'
 import { useToast } from '@/app/context/ToastContext'
 import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
@@ -12,11 +10,9 @@ import { Button } from '@/app/components/Button'
 import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
 import { Nickname } from '@/app/planning-poker/[rid]/components/Nickname'
 import { PocketCards } from '@/app/planning-poker/[rid]/components/PocketCards'
-import { useFirestore } from '@/app/hooks/useFirestore'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const ridRef = useRef(rid)
-  const { getDoc } = useFirestore()
   const { me } = useMe()
   const {
     startRoomSubscription,
@@ -35,22 +31,6 @@ export const PokerTable = ({ rid }: { rid: string }) => {
   const router = useRouter()
   const { showToast } = useToast()
   const initRef = useRef(false)
-
-  useEffect(() => {
-    // NOTE: 初期化
-    if (initRef.current) {
-      return
-    }
-    //NOTE: 部屋の存在チェック
-    const docRef = doc(db, 'room', rid)
-    getDoc(docRef)
-      .then(docSnap => {
-        if (!docSnap.exists()) {
-          // NOTE: 部屋は存在しないので退室
-          router.replace('/planning-poker')
-        }
-      })
-  }, [entry, exit, getDoc, rid, router, showToast])
 
   useEffect(() => {
     //NOTE: 部屋に入室する

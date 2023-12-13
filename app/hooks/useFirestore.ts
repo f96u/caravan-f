@@ -48,6 +48,9 @@ export const useFirestore = () => {
   }, [])
 
   const getDocs = useCallback(<T,>(ref: Query<T>) => {
+    if (!canConnect()) {
+      return Promise.reject()
+    }
     return originGetDocs(ref)
   }, [])
 
