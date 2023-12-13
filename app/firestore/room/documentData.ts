@@ -11,7 +11,7 @@ export type DocumentData = {
   players: {
     [key: string]: PlayerState,
   },
-  showdown: boolean
+  isReveal: boolean
   createdAt: FieldValue
   updatedAt: FieldValue
   version: string
@@ -24,7 +24,7 @@ export const initPlayerState: PlayerState = {
 
 export const initDocumentData: DocumentData = {
   players: {},
-  showdown: false,
+  isReveal: false,
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
   version: '23.10.27'
@@ -32,7 +32,7 @@ export const initDocumentData: DocumentData = {
 
 const fallbackData: DocumentData = {
   players: {},
-  showdown: false,
+  isReveal: false,
   createdAt: Timestamp.fromDate(new Date()),
   updatedAt: Timestamp.fromDate(new Date()),
   version: 'fallback'

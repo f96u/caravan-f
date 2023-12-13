@@ -1,8 +1,7 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { db } from '@/app/firebaseApp'
 import { doc, onSnapshot, serverTimestamp } from '@firebase/firestore'
 import { CardId, DocumentData, initPlayerState, PlayerState, shapingData } from '@/app/firestore/room/documentData'
-import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
 import { useFirestore } from '@/app/hooks/useFirestore'
 
 export const useRoom = (rid: string) => {
@@ -23,10 +22,6 @@ export const useRoom = (rid: string) => {
     )
     return () => unsub()
   }, [])
-
-  const players = useMemo(() => {
-    return room?.players || {}
-  }, [room?.players])
 
   const entry = useCallback(async (uid: string) => {
     try {
@@ -72,23 +67,23 @@ export const useRoom = (rid: string) => {
   }, [runTransaction])
 
   const playerStateWithoutMe = useCallback((uid: string) => {
-    if (players === undefined) {
+    if (room?.players === undefined) {
       return undefined
     }
     return Object.fromEntries(
-      Object.entries(players)
+      Object.entries(room.players)
         .filter(([pid]) => pid !== uid)
         .map(([pid, playerState]) => [pid, playerState])
     )
-  }, [players])
+  }, [room?.players])
 
   const myPlayerState = useCallback((uid: string): PlayerState | null => {
-    if (uid in players) {
-      return players[uid]
+    if (room && uid in room.players) {
+      return room.players[uid]
     }
 
     return null
-  }, [players])
+  }, [room])
 
   const selectCard = useCallback(async (uid: string, cardId: CardId) => {
     try {
@@ -119,8 +114,8 @@ export const useRoom = (rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        transaction.update(roomDocRef.current, { showdown: true, updatedAt: serverTimestamp() })
-        setRoom({ ...preData, showdown: true, updatedAt: serverTimestamp() })
+        transaction.update(roomDocRef.current, { isReveal: true, updatedAt: serverTimestamp() })
+        setRoom({ ...preData, isReveal: true, updatedAt: serverTimestamp() })
       })
       return 'ok'
     }
@@ -140,8 +135,8 @@ export const useRoom = (rid: string) => {
         const nextPlayers: DocumentData["players"] = Object.keys(preData.players).reduce((acc, cur) => {
           return { ...acc, [cur]: {...initPlayerState, nickname: preData.players[cur].nickname }}
         }, {})
-        transaction.update(roomDocRef.current, { players: nextPlayers, showdown: false, updatedAt: serverTimestamp() })
-        setRoom({ ...preData, players: nextPlayers, showdown: false, updatedAt: serverTimestamp() })
+        transaction.update(roomDocRef.current, { players: nextPlayers, isReveal: false, updatedAt: serverTimestamp() })
+        setRoom({ ...preData, players: nextPlayers, isReveal: false, updatedAt: serverTimestamp() })
       })
       return 'ok'
     }
@@ -171,14 +166,6 @@ export const useRoom = (rid: string) => {
     }
   }, [runTransaction])
 
-  const canTurnOver = useMemo(() => {
-    if (players === undefined) {
-      return false
-    }
-    const playersIds = players ? getKeys(players) : []
-    return playersIds.some(pid => players[pid].card === null)
-  }, [players])
-
   return {
     startRoomSubscription,
     room,
@@ -189,7 +176,6 @@ export const useRoom = (rid: string) => {
     selectCard,
     showdown,
     resetGame,
-    setNickname,
-    canTurnOver
+    setNickname
   }
 }

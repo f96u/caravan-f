@@ -3,11 +3,11 @@ import CardButton from '@/app/planning-poker/[rid]/components/CardButton'
 import React, { useEffect, useRef, useState } from 'react'
 
 type Props = {
-  isTurnOver: boolean
+  isReveal: boolean
   selectCardId: PlayerState["card"]
   onClick: (id: string) => void
 }
-export const PocketCards = ({ isTurnOver, selectCardId, onClick }: Props) => {
+export const PocketCards = ({ isReveal, selectCardId, onClick }: Props) => {
   const [tmpSelectId, setTmpSelectId] = useState<string | null>(null)
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export const PocketCards = ({ isTurnOver, selectCardId, onClick }: Props) => {
   return (
     <div className="m-1 flex flex-wrap items-center justify-center gap-2 rounded-md bg-indigo-100 p-3">
       {cardIds.map(cid => (
-        <CardButton key={cid} id={cid} selected={selected(cid)} isLock={isTurnOver} onClick={handleSelect}>{cid}</CardButton>
+        <CardButton key={cid} id={cid} selected={selected(cid)} isLock={isReveal} onClick={handleSelect}>{cid}</CardButton>
       ))}
     </div>
   )

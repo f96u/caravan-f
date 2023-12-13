@@ -2,7 +2,7 @@
 
 import { useRoom } from '@/app/planning-poker/[rid]/components/hooks/useRoom'
 import { useRouter } from 'next/navigation'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { useMe } from '@/app/hooks/useMe'
 import { useToast } from '@/app/context/ToastContext'
 import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
@@ -25,9 +25,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     showdown,
     resetGame,
     setNickname,
-    canTurnOver,
   } = useRoom(ridRef.current)
-  const [isTurnOver, setIsTurnOver] = useState(false)
   const router = useRouter()
   const { showToast } = useToast()
   const initRef = useRef(false)
@@ -53,11 +51,6 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     }
   }, [entry, exit, me, myPlayerState, router, showToast, startRoomSubscription])
 
-  useEffect(() => {
-    // NOTE: 他のプレイヤーがshowdownした際の処理
-    setIsTurnOver(!!room?.showdown)
-  }, [room?.showdown])
-
   const submitNickname = async (nickname: string) => {
     if (!me) {
       return
@@ -72,22 +65,22 @@ export const PokerTable = ({ rid }: { rid: string }) => {
   }
 
   const handleActionButton = () => {
-    if (isTurnOver) {
-      resetGame().then(r => r && setIsTurnOver(false))
+    if (room?.isReveal) {
+      resetGame()
     } else {
-      showdown().then(r => r && setIsTurnOver(true))
+      showdown()
     }
   }
 
   return me ? (
     <>
-      <BoardSurface players={playerStateWithoutMe(me.uid) ?? {}} result={showdownResult(room?.players ?? {})} isTurnOver={isTurnOver}>
-        <Button className="h-fit w-full" disabled={canTurnOver} onClick={handleActionButton}>
-          {isTurnOver ? 'リセット' : '表示'}
+      <BoardSurface players={playerStateWithoutMe(me.uid) ?? {}} result={showdownResult(room?.players ?? {})} isReveal={!!room?.isReveal}>
+        <Button className="h-fit w-full" onClick={handleActionButton}>
+          {room?.isReveal ? 'リセット' : '表示'}
         </Button>
         <Nickname nickname={myPlayerState(me.uid)?.nickname ?? ''} onSubmit={submitNickname} />
       </BoardSurface>
-      <PocketCards isTurnOver={isTurnOver} selectCardId={myPlayerState(me.uid)?.card ?? null} onClick={cid => selectCard(me.uid, cid)} />
+      <PocketCards isReveal={!!room?.isReveal} selectCardId={myPlayerState(me.uid)?.card ?? null} onClick={cid => selectCard(me.uid, cid)} />
     </>
   ) : null
 }
