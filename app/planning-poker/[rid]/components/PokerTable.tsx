@@ -54,7 +54,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
 
   useEffect(() => {
     //NOTE: 部屋に入室する
-    if (!me) {
+    if (!me || !!myPlayerState(me.uid)) {
       return
     }
     entry(me.uid)
@@ -71,7 +71,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     return () => {
       (async () => await exit(me.uid))()
     }
-  }, [entry, exit, me, router, showToast])
+  }, [entry, exit, me, myPlayerState, router, showToast, startRoomSubscription])
 
   useEffect(() => {
     // NOTE: 他のプレイヤーがshowdownした際の処理
@@ -105,9 +105,9 @@ export const PokerTable = ({ rid }: { rid: string }) => {
         <Button className="h-fit w-full" disabled={canTurnOver} onClick={handleActionButton}>
           {isTurnOver ? 'リセット' : '表示'}
         </Button>
-        <Nickname nickname={myPlayerState(me.uid).nickname} onSubmit={submitNickname} />
+        <Nickname nickname={myPlayerState(me.uid)?.nickname ?? ''} onSubmit={submitNickname} />
       </BoardSurface>
-      <PocketCards isTurnOver={isTurnOver} selectCardId={myPlayerState(me.uid).card} onClick={cid => selectCard(me.uid, cid)} />
+      <PocketCards isTurnOver={isTurnOver} selectCardId={myPlayerState(me.uid)?.card ?? null} onClick={cid => selectCard(me.uid, cid)} />
     </>
   ) : null
 }

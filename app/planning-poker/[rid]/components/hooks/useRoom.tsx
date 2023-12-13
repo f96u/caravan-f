@@ -1,8 +1,7 @@
-import { User } from '@firebase/auth'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { db } from '@/app/firebaseApp'
 import { doc, onSnapshot, serverTimestamp } from '@firebase/firestore'
-import { DocumentData, initPlayerState, PlayerState, shapingData } from '@/app/firestore/room/documentData'
+import { CardId, DocumentData, initPlayerState, PlayerState, shapingData } from '@/app/firestore/room/documentData'
 import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
 import { useFirestore } from '@/app/hooks/useFirestore'
 
@@ -43,6 +42,7 @@ export const useRoom = (rid: string) => {
         }
         const nextPlayers = { ...preData.players, [uid]: initPlayerState}
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
+        setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
     catch (error) {
@@ -82,15 +82,15 @@ export const useRoom = (rid: string) => {
     )
   }, [players])
 
-  const myPlayerState = useCallback((uid: string): PlayerState => {
+  const myPlayerState = useCallback((uid: string): PlayerState | null => {
     if (uid in players) {
       return players[uid]
     }
-    // NOTE: ロジック上、ここに処理はこないが型を合わせるためにinitPlayerStateを置く
-    return initPlayerState
+
+    return null
   }, [players])
 
-  const selectCard = useCallback(async (uid: string, cardId: string) => {
+  const selectCard = useCallback(async (uid: string, cardId: CardId) => {
     try {
       await runTransaction(async (transaction) => {
         const docSnap = await transaction.get(roomDocRef.current)
@@ -98,11 +98,12 @@ export const useRoom = (rid: string) => {
           throw 'Document does not exists!'
         }
         const preData = shapingData(docSnap)
-        const nextPlayers = {
+        const nextPlayers: { [key: string]: PlayerState } = {
           ...preData.players,
           [uid]: { nickname: preData.players[uid].nickname, card: cardId }
         }
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
+        setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
     catch (error) {
@@ -119,6 +120,7 @@ export const useRoom = (rid: string) => {
         }
         const preData = shapingData(docSnap)
         transaction.update(roomDocRef.current, { showdown: true, updatedAt: serverTimestamp() })
+        setRoom({ ...preData, showdown: true, updatedAt: serverTimestamp() })
       })
       return 'ok'
     }
@@ -139,6 +141,7 @@ export const useRoom = (rid: string) => {
           return { ...acc, [cur]: {...initPlayerState, nickname: preData.players[cur].nickname }}
         }, {})
         transaction.update(roomDocRef.current, { players: nextPlayers, showdown: false, updatedAt: serverTimestamp() })
+        setRoom({ ...preData, players: nextPlayers, showdown: false, updatedAt: serverTimestamp() })
       })
       return 'ok'
     }
@@ -160,6 +163,7 @@ export const useRoom = (rid: string) => {
           [uid]: { card: preData.players[uid].card, nickname }
         }
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
+        setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
       })
     }
     catch (error) {

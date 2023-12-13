@@ -31,7 +31,7 @@ export const useRoom = () => {
         showToast('部屋を削除できません', 'error')
         console.log(error)
       })
-  }, [roomList, showToast])
+  }, [deleteDoc, roomList, showToast])
 
   const checkRoom = useCallback(() => {
     getDocs(collection(db, 'room'))
@@ -41,7 +41,7 @@ export const useRoom = () => {
       .catch(error => {
         console.error('failed room collection: ', error)
       })
-  }, [])
+  }, [getDocs])
 
   return { roomList, checkRoom, createRoom, deleteRoom }
 }

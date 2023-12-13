@@ -11,7 +11,7 @@ import {
 import { db } from '@/app/firebaseApp'
 import { useCallback, useMemo, useState } from 'react'
 
-const BREAK_COUNT = 3
+const BREAK_COUNT = 8
 const LAP_TIME = 3000
 
 /**
@@ -44,18 +44,12 @@ export const useFirestore = () => {
   }), [canConnect])
 
   const getDoc = useCallback(<T,>(ref: DocumentReference<T>) => {
-    if (!canConnect()) {
-      return Promise.reject()
-    }
     return originGetDoc(ref)
-  }, [canConnect])
+  }, [])
 
   const getDocs = useCallback(<T,>(ref: Query<T>) => {
-    if (!canConnect()) {
-      return Promise.reject()
-    }
     return originGetDocs(ref)
-  }, [canConnect])
+  }, [])
 
   const addDoc = useCallback(<T,>(ref: CollectionReference<T>, data: WithFieldValue<T>) => {
     if (!canConnect()) {
