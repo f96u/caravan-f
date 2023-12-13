@@ -3,11 +3,15 @@ import { db } from '@/app/firebaseApp'
 import { doc, onSnapshot, serverTimestamp } from '@firebase/firestore'
 import { CardId, DocumentData, initPlayerState, PlayerState, shapingData } from '@/app/firestore/room/documentData'
 import { useFirestore } from '@/app/hooks/useFirestore'
+import { useRouter } from 'next/navigation'
+import { useToast } from '@/app/context/ToastContext'
 
 export const useRoom = (rid: string) => {
   const { runTransaction } = useFirestore()
   const [room, setRoom] = useState<DocumentData | undefined>(undefined)
   const roomDocRef = useRef(doc(db, 'room', rid))
+  const router = useRouter()
+  const { showToast } = useToast()
 
   const startRoomSubscription = useCallback(() => {
     const unsub = onSnapshot(
@@ -39,9 +43,13 @@ export const useRoom = (rid: string) => {
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
         setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
       })
+      // NOTE: 情報のサブクス開始
+      startRoomSubscription()
     }
     catch (error) {
       console.error('Transaction failed: ', error)
+      showToast('入室できませんでした', 'error')
+      router.replace('/planning-poker')
     }
   }, [runTransaction])
 
@@ -160,9 +168,11 @@ export const useRoom = (rid: string) => {
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
         setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
       })
+      showToast('ニックネームを変更しました', 'success')
     }
     catch (error) {
       console.error('Transaction failed: ', error)
+      showToast('ニックネームを変更できませんでした', 'error')
     }
   }, [runTransaction])
 

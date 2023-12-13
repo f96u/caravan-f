@@ -15,7 +15,6 @@ export const PokerTable = ({ rid }: { rid: string }) => {
   const ridRef = useRef(rid)
   const { me } = useMe()
   const {
-    startRoomSubscription,
     room,
     playerStateWithoutMe,
     entry,
@@ -26,50 +25,29 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     resetGame,
     setNickname,
   } = useRoom(ridRef.current)
-  const router = useRouter()
-  const { showToast } = useToast()
   const initRef = useRef(false)
 
+  //NOTE: 部屋に入室する
   useEffect(() => {
-    //NOTE: 部屋に入室する
-    if (!me || !!myPlayerState(me.uid)) {
+    if (!me || initRef.current) {
       return
     }
-    entry(me.uid)
-      .then(() => {
-        // NOTE: 情報のサブクス開始
-        startRoomSubscription()
-      })
-      .catch(error => {
-        showToast('入室できませんでした', 'error')
-        router.replace('/planning-poker')
-        console.error(error)
-      })
     initRef.current = true
+    entry(me.uid)
     return () => {
       (async () => await exit(me.uid))()
     }
-  }, [entry, exit, me, myPlayerState, router, showToast, startRoomSubscription])
+  }, [entry, exit, me])
 
   const submitNickname = async (nickname: string) => {
     if (!me) {
       return
     }
-    try {
-      await setNickname(me.uid, nickname)
-      showToast('ニックネームを変更しました', 'success')
-    } catch (e) {
-      console.error(e)
-      showToast('ニックネームを変更できませんでした', 'error')
-    }
+    await setNickname(me.uid, nickname)
   }
 
   const handleActionButton = () => {
-    if (room?.isReveal) {
-      resetGame()
-    } else {
-      showdown()
-    }
+    room?.isReveal ? resetGame() : showdown()
   }
 
   return me ? (
