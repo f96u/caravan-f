@@ -1,14 +1,14 @@
-import { cardIds, PlayerState } from '@/app/firestore/room/documentData'
+import { CardId, cardIds, PlayerState } from '@/app/firestore/room/documentData'
 import CardButton from '@/app/planning-poker/[rid]/components/CardButton'
 import React, { useEffect, useRef, useState } from 'react'
 
 type Props = {
   isReveal: boolean
   selectCardId: PlayerState["card"]
-  onClick: (id: string) => void
+  onClick: (id: CardId) => void
 }
 export const PocketCards = ({ isReveal, selectCardId, onClick }: Props) => {
-  const [tmpSelectId, setTmpSelectId] = useState<string | null>(null)
+  const [tmpSelectId, setTmpSelectId] = useState<CardId | null>(null)
 
   useEffect(() => {
     if (tmpSelectId === selectCardId) {
@@ -16,7 +16,7 @@ export const PocketCards = ({ isReveal, selectCardId, onClick }: Props) => {
     }
   }, [selectCardId, tmpSelectId])
 
-  const handleSelect = (id: string) => {
+  const handleSelect = (id: CardId) => {
     if (!tmpSelectId) {
       setTmpSelectId(id)
       onClick(id)
