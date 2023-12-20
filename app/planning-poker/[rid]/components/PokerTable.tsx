@@ -1,10 +1,8 @@
 'use client'
 
 import { useRoom } from '@/app/planning-poker/[rid]/components/hooks/useRoom'
-import { useRouter } from 'next/navigation'
 import React, { useEffect, useRef } from 'react'
 import { useMe } from '@/app/hooks/useMe'
-import { useToast } from '@/app/context/ToastContext'
 import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
 import { Button } from '@/app/components/Button'
 import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
@@ -18,7 +16,6 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     room,
     playerStateWithoutMe,
     entry,
-    exit,
     myPlayerState,
     selectCard,
     showdown,
@@ -34,10 +31,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     }
     initRef.current = true
     entry(me.uid)
-    return () => {
-      (async () => await exit(me.uid))()
-    }
-  }, [entry, exit, me])
+  }, [entry, me])
 
   const submitNickname = async (nickname: string) => {
     if (!me) {

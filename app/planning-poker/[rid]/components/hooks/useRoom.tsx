@@ -13,26 +13,11 @@ export const useRoom = (rid: string) => {
   const router = useRouter()
   const { showToast } = useToast()
 
-  const startRoomSubscription = useCallback(() => {
-    const unsub = onSnapshot(
-      roomDocRef.current,
-      docSnap => {
-        if (!docSnap.exists()) {
-          throw 'Document does not exists!'
-        }
-        const docData = shapingData(docSnap)
-        setRoom(docData)
-      }
-    )
-    return () => unsub()
-  }, [])
-
   const entry = useCallback(async (uid: string) => {
     try {
       await runTransaction(async (transaction) => {
         const docSnap = await transaction.get(roomDocRef.current)
         if (!docSnap.exists()) {
-
           console.error('Document does not exists!')
         }
         const preData = shapingData(docSnap)
@@ -43,36 +28,46 @@ export const useRoom = (rid: string) => {
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
         setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
       })
-      // NOTE: 情報のサブクス開始
-      startRoomSubscription()
     }
     catch (error) {
       console.error('Transaction failed: ', error)
       showToast('入室できませんでした', 'error')
       router.replace('/planning-poker')
+      return
     }
-  }, [runTransaction])
-
-  const exit = useCallback(async (uid: string) => {
-    try {
-      await runTransaction(async (transaction) => {
-        const docSnap = await transaction.get(roomDocRef.current)
+    // NOTE: roomのサブスク開始
+    const unsub = onSnapshot(
+      roomDocRef.current,
+      docSnap => {
         if (!docSnap.exists()) {
           throw 'Document does not exists!'
         }
-        const preData = shapingData(docSnap)
-        const nextPlayers = Object.keys(preData.players)
-          .filter(key => key !== uid)
-          .reduce((obj, key) => {
-            return { ...obj, [key]: preData.players[key]}
-          }, {} as DocumentData['players'])
-        transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
-      })
+        const docData = shapingData(docSnap)
+        setRoom(docData)
+      }
+    )
+    return async () => {
+      unsub()
+      // NOTE: roomからの退室処理
+      try {
+        await runTransaction(async (transaction) => {
+          const docSnap = await transaction.get(roomDocRef.current)
+          if (!docSnap.exists()) {
+            throw 'Document does not exists!'
+          }
+          const preData = shapingData(docSnap)
+          const nextPlayers = Object.keys(preData.players)
+            .filter(key => key !== uid)
+            .reduce((obj, key) => {
+              return {...obj, [key]: preData.players[key]}
+            }, {} as DocumentData['players'])
+          transaction.update(roomDocRef.current, {players: nextPlayers, updatedAt: serverTimestamp()})
+        })
+      } catch (error) {
+        console.error('Transaction failed: ', error)
+      }
     }
-    catch (error) {
-      console.error('Transaction failed: ', error)
-    }
-  }, [runTransaction])
+  }, [router, runTransaction, showToast])
 
   const playerStateWithoutMe = useCallback((uid: string) => {
     if (room?.players === undefined) {
@@ -177,10 +172,8 @@ export const useRoom = (rid: string) => {
   }, [runTransaction])
 
   return {
-    startRoomSubscription,
     room,
     entry,
-    exit,
     playerStateWithoutMe,
     myPlayerState,
     selectCard,
