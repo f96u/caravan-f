@@ -63,8 +63,9 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     }
   }, [me, room])
 
-  return me ? (
+  return me && playerStateWithoutMe !== undefined ? (
     <>
+      {playerStateWithoutMe === null && <div className="rounded-md bg-indigo-300 px-3.5 py-1 text-sm text-white">他のプレイヤーの参加を待っています。</div>}
       <BoardSurface players={playerStateWithoutMe ?? {}} result={showdownResult(room?.players ?? {})} isReveal={!!room?.isReveal}>
         <Button className="h-fit w-full" onClick={handleActionButton}>
           {room?.isReveal ? 'リセット' : '表示'}
