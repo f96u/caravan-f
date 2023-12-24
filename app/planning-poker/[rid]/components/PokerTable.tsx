@@ -1,22 +1,21 @@
 'use client'
 
 import { useRoom } from '@/app/planning-poker/[rid]/components/hooks/useRoom'
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { useMe } from '@/app/hooks/useMe'
 import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
 import { Button } from '@/app/components/Button'
 import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
 import { Nickname } from '@/app/planning-poker/[rid]/components/Nickname'
 import { PocketCards } from '@/app/planning-poker/[rid]/components/PocketCards'
+import { PlayerState } from '@/app/firestore/room/documentData'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const ridRef = useRef(rid)
   const { me } = useMe()
   const {
     room,
-    playerStateWithoutMe,
     entry,
-    myPlayerState,
     selectCard,
     showdown,
     resetGame,
@@ -44,15 +43,35 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     room?.isReveal ? resetGame() : showdown()
   }
 
+  const playerStateWithoutMe = useMemo(() => {
+    if (room?.players === undefined || !me) {
+      return undefined
+    }
+    const players = Object.fromEntries(
+      Object.entries(room.players)
+        .filter(([pid]) => pid !== me.uid)
+        .map(([pid, playerState]) => [pid, playerState])
+    )
+    return Object.keys(players).length ? players : null
+  }, [me, room?.players])
+
+  const myPlayerState = useMemo((): PlayerState | undefined => {
+    if (!room || !me || !(me.uid in room.players)) {
+      return undefined
+    } else {
+      return room.players[me.uid]
+    }
+  }, [me, room])
+
   return me ? (
     <>
-      <BoardSurface players={playerStateWithoutMe(me.uid) ?? {}} result={showdownResult(room?.players ?? {})} isReveal={!!room?.isReveal}>
+      <BoardSurface players={playerStateWithoutMe ?? {}} result={showdownResult(room?.players ?? {})} isReveal={!!room?.isReveal}>
         <Button className="h-fit w-full" onClick={handleActionButton}>
           {room?.isReveal ? 'リセット' : '表示'}
         </Button>
-        <Nickname nickname={myPlayerState(me.uid)?.nickname ?? ''} onSubmit={submitNickname} />
+        <Nickname nickname={myPlayerState?.nickname ?? ''} onSubmit={submitNickname} />
       </BoardSurface>
-      <PocketCards isReveal={!!room?.isReveal} selectCardId={myPlayerState(me.uid)?.card ?? null} onClick={cid => selectCard(me.uid, cid)} />
+      <PocketCards isReveal={!!room?.isReveal} selectCardId={myPlayerState?.card ?? null} onClick={cid => selectCard(me.uid, cid)} />
     </>
   ) : null
 }

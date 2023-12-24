@@ -69,25 +69,6 @@ export const useRoom = (rid: string) => {
     }
   }, [router, runTransaction, showToast])
 
-  const playerStateWithoutMe = useCallback((uid: string) => {
-    if (room?.players === undefined) {
-      return undefined
-    }
-    return Object.fromEntries(
-      Object.entries(room.players)
-        .filter(([pid]) => pid !== uid)
-        .map(([pid, playerState]) => [pid, playerState])
-    )
-  }, [room?.players])
-
-  const myPlayerState = useCallback((uid: string): PlayerState | null => {
-    if (room && uid in room.players) {
-      return room.players[uid]
-    }
-
-    return null
-  }, [room])
-
   const selectCard = useCallback(async (uid: string, cardId: CardId) => {
     try {
       await runTransaction(async (transaction) => {
@@ -174,8 +155,6 @@ export const useRoom = (rid: string) => {
   return {
     room,
     entry,
-    playerStateWithoutMe,
-    myPlayerState,
     selectCard,
     showdown,
     resetGame,
