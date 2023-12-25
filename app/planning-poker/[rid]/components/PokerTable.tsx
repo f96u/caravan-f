@@ -63,12 +63,19 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     }
   }, [me, room])
 
+  const canShowdown = useMemo(() => {
+    if (!room || !playerStateWithoutMe) {
+      return false
+    }
+    return Object.values(room.players).every(ps => ps.card !== null)
+  }, [playerStateWithoutMe, room])
+
   return me && playerStateWithoutMe !== undefined ? (
     <>
       {playerStateWithoutMe === null && <div className="rounded-md bg-indigo-300 px-3.5 py-1 text-sm text-white">他のプレイヤーの参加を待っています。</div>}
       <BoardSurface players={playerStateWithoutMe ?? {}} result={showdownResult(room?.players ?? {})} isReveal={!!room?.isReveal}>
-        <Button className="h-fit w-full" onClick={handleActionButton}>
-          {room?.isReveal ? 'リセット' : '表示'}
+        <Button className="h-fit w-full" onClick={handleActionButton} disabled={!canShowdown}>
+          {room?.isReveal ? 'リセット' : 'ショーダウン'}
         </Button>
         <Nickname nickname={myPlayerState?.nickname ?? ''} onSubmit={submitNickname} />
       </BoardSurface>
