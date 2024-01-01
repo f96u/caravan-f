@@ -9,7 +9,7 @@ import {
   DocumentReference, CollectionReference, WithFieldValue
 } from '@firebase/firestore'
 import { db } from '@/app/firebaseApp'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 
 const BREAK_COUNT = 8
 const LAP_TIME = 3000
@@ -20,20 +20,20 @@ const LAP_TIME = 3000
  */
 export const useFirestore = () => {
   const [circuitBreak, setCircuitBreak] = useState(false)
-  const [count, setCount] = useState(0)
+  const countRef = useRef(0)
 
   const canConnect = useCallback(() => {
-    if (count > BREAK_COUNT) {
+    if (countRef.current > BREAK_COUNT) {
       console.error('Circuit breaker')
       setCircuitBreak(true)
       return false
     } else if (circuitBreak) {
       return false
     }
-    setCount(prevState => prevState + 1)
-    window.setTimeout(() => setCount(prevState => prevState - 1), LAP_TIME)
+    countRef.current = countRef.current + 1
+    window.setTimeout(() => countRef.current = countRef.current - 1, LAP_TIME)
     return true
-  }, [circuitBreak, count])
+  }, [circuitBreak])
 
   const runTransaction = useCallback(((transaction: (transaction: Transaction) => Promise<unknown>) => {
     if (!canConnect()) {
@@ -52,7 +52,7 @@ export const useFirestore = () => {
       return Promise.reject()
     }
     return originGetDocs(ref)
-  }, [])
+  }, [canConnect])
 
   const addDoc = useCallback(<T,>(ref: CollectionReference<T>, data: WithFieldValue<T>) => {
     if (!canConnect()) {

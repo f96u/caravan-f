@@ -11,10 +11,10 @@ export const Rooms = () => {
   const { roomList, checkRoom, createRoom, deleteRoom } = useRoom()
 
   useEffect(() => {
-    if (me) {
+    if (me?.uid) {
       checkRoom()
     }
-  }, [checkRoom, me])
+  }, [checkRoom, me?.uid])
 
   const delRoom = useCallback((rid: string) => {
     deleteRoom(rid)
