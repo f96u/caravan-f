@@ -1,7 +1,7 @@
-import Card from '@/app/planning-poker/[rid]/components/Card'
 import React from 'react'
 import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
 import { DocumentData } from '@/app/firestore/room/documentData'
+import CardWithExit from '@/app/planning-poker/[rid]/components/CardWithExit'
 
 const displayMapData = [
   {},
@@ -33,7 +33,7 @@ export const PlayerDisplay = ({ players, mapping, isTurnOver }: Props) => {
 
   return displayMap[mapping] !== undefined ? (
     <div className="flex flex-col items-center">
-      <Card selected={!!card}>{isTurnOver ? card : "?"}</Card>
+      <CardWithExit selected={!!card} onClick={() => {}}>{isTurnOver ? card : "?"}</CardWithExit>
       {playerState.nickname !== '' ? playerState.nickname : 'NOT NAME'}
     </div>
   ): null

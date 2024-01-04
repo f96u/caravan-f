@@ -1,7 +1,6 @@
-import 'client-only'
 import { ReactNode, useCallback } from 'react'
 import Card from '@/app/planning-poker/[rid]/components/Card'
-import { CardId, cardIds } from '@/app/firestore/room/documentData'
+import { CardId } from '@/app/firestore/room/documentData'
 
 type Props = {
   id: CardId
