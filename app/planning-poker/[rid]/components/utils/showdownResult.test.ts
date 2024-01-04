@@ -1,5 +1,5 @@
 import { describe, expect, test } from '@jest/globals'
-import { CardId, DocumentData } from '@/app/firestore/room/documentData'
+import { DocumentData } from '@/app/firestore/room/documentData'
 import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
 
 describe('showdownResult', () => {
@@ -13,21 +13,23 @@ describe('showdownResult', () => {
     expect(showdownResult(players)).toBe('?')
   })
 
-  test('ポイントが2つ以上離れている場合に"X"が返却される', () => {
-    const players: DocumentData["players"] = {
-      "1": { nickname: 'nickname', card: '0' },
-      "2": { nickname: 'nickname', card: '2' }
-    }
-    expect(showdownResult(players)).toBe('X')
-  })
+  describe('ポイントが2つ以上離れている場合に"X"が返却される', () => {
+    test('2人のプレイヤーの場合', () => {
+      const players: DocumentData["players"] = {
+        "1": { nickname: 'nickname', card: '0' },
+        "2": { nickname: 'nickname', card: '2' }
+      }
+      expect(showdownResult(players)).toBe('X')
+    })
 
-  test('想定してないCardIdが返却された場合に"ERROR"が返却される', () => {
-    const card: CardId = '-1' as CardId
-    const players: DocumentData["players"] = {
-      "1": { nickname: 'nickname', card },
-      "2": { nickname: 'nickname', card: '0' },
-    }
-    expect(showdownResult(players)).toBe('ERROR')
+    test('3人のプレイヤーの場合', () => {
+      const players: DocumentData["players"] = {
+        "1": { nickname: 'nickname', card: '0' },
+        "2": { nickname: 'nickname', card: '1' },
+        "3": { nickname: 'nickname', card: '3' }
+      }
+      expect(showdownResult(players)).toBe('X')
+    })
   })
 
   describe('正常に返却される', () => {
@@ -38,7 +40,7 @@ describe('showdownResult', () => {
 
     test('2人の場合', () => {
       const players: DocumentData["players"] = {
-        "1": { nickname: 'nickname', card: '1' },
+        "1": { nickname: 'nickname', card: '2' },
         "2": { nickname: 'nickname', card: '2' },
       }
       expect(showdownResult(players)).toBe('2')
@@ -56,11 +58,11 @@ describe('showdownResult', () => {
     test('4人の場合', () => {
       const players: DocumentData["players"] = {
         "1": { nickname: 'nickname', card: '1' },
-        "2": { nickname: 'nickname', card: '2' },
-        "3": { nickname: 'nickname', card: '3' },
-        "5": { nickname: 'nickname', card: '5' },
+        "2": { nickname: 'nickname', card: '1' },
+        "3": { nickname: 'nickname', card: '2' },
+        "5": { nickname: 'nickname', card: '3' },
       }
-      expect(showdownResult(players)).toBe('3')
+      expect(showdownResult(players)).toBe('2')
     })
   })
 })

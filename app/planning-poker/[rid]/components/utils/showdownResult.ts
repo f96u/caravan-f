@@ -8,6 +8,31 @@ const isCardId = (id: string): id is CardId => {
   return cardIds.some(cid => cid === id)
 }
 
+const checkChained = (cIds: CardId[]): boolean => {
+  if (cIds.length === 1) {
+    return true
+  }
+  const numCardIds = cIds.map(cid => Number(cid))
+  const minNum = Math.min(...numCardIds).toString()
+  if (!isCardId(minNum)) {
+    return false
+  }
+  const idx = cardIds.indexOf(minNum)
+  if (idx === -1) {
+    return false
+  }
+  if (cIds.length === 2) {
+    if (cIds[0] === cIds[1]) {
+      return true
+    }
+  }
+  const nextCardId = cardIds[idx + 1]
+  const isConnected = cIds.some(cid => cid === nextCardId)
+  if (!isConnected) {
+    return false
+  }
+  return checkChained(cIds.filter(cid => cid !== minNum))
+}
 export const showdownResult = (players: DocumentData["players"]) => {
   // NOTE: 全員が選択してない状態で呼ばれた時はERRORを返却する
   if (Object.values(players).some(ps => !ps.card)) {
@@ -28,24 +53,11 @@ export const showdownResult = (players: DocumentData["players"]) => {
   }
 
   // NOTE: 2つ以上離れていないかチェックする
-  const len = cIds.length
-  if (len > 1) {
-    const minNum = Math.min(...numCardIds).toString()
-    if (!isCardId(minNum)) {
-      return 'ERROR'
-    }
-    const idx = cardIds.indexOf(minNum)
-    if (idx === -1) {
-      return 'ERROR'
-    }
-    const nextCardId = cardIds[idx + 1]
-    const isConnected = cIds.some(cid => cid === nextCardId)
-    if (!isConnected) {
-      return 'X'
-    }
+  if (!checkChained(cIds)) {
+    return 'X'
   }
 
   const sum = cIds.reduce((acc, cur) => acc + Number(cur), 0)
-  const average = sum / len
+  const average = sum / cIds.length
   return `${orgRound(average, 1)}`
 }
