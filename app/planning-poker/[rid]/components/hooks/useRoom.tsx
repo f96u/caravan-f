@@ -1,14 +1,16 @@
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useContext, useRef } from 'react'
 import { db } from '@/app/firebaseApp'
 import { doc, onSnapshot, serverTimestamp } from '@firebase/firestore'
 import { CardId, DocumentData, initPlayerState, PlayerState, shapingData } from '@/app/firestore/room/documentData'
 import { useFirestore } from '@/app/hooks/useFirestore'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/app/context/ToastContext'
+import { RoomContext, RoomDispatchContext } from '@/app/planning-poker/[rid]/components/contexts/RoomContext'
 
 export const useRoom = (rid: string) => {
   const { runTransaction } = useFirestore()
-  const [room, setRoom] = useState<DocumentData | undefined>(undefined)
+  const room = useContext(RoomContext)
+  const dispatch = useContext(RoomDispatchContext)
   const roomDocRef = useRef(doc(db, 'room', rid))
   const router = useRouter()
   const { showToast } = useToast()
@@ -26,7 +28,7 @@ export const useRoom = (rid: string) => {
         }
         const nextPlayers = { ...preData.players, [uid]: initPlayerState}
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
-        setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
+        dispatch({ type: 'updatePlayers', payload: { players: nextPlayers }})
       })
     }
     catch (error) {
@@ -43,7 +45,7 @@ export const useRoom = (rid: string) => {
           throw 'Document does not exists!'
         }
         const docData = shapingData(docSnap)
-        setRoom(docData)
+        dispatch({ type: 'set', payload: { room: docData }})
       }
     )
     return async () => {
@@ -67,7 +69,7 @@ export const useRoom = (rid: string) => {
         console.error('Transaction failed: ', error)
       }
     }
-  }, [router, runTransaction, showToast])
+  }, [dispatch, router, runTransaction, showToast])
 
   const selectCard = useCallback(async (uid: string, cardId: CardId) => {
     try {
@@ -82,13 +84,13 @@ export const useRoom = (rid: string) => {
           [uid]: { nickname: preData.players[uid].nickname, card: cardId }
         }
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
-        setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
+        dispatch({ type: 'updatePlayers', payload: { players: nextPlayers }})
       })
     }
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [runTransaction])
+  }, [dispatch, runTransaction])
 
   const showdown = useCallback(async () => {
     try {
@@ -97,16 +99,15 @@ export const useRoom = (rid: string) => {
         if (!docSnap.exists()) {
           throw 'Document does not exists!'
         }
-        const preData = shapingData(docSnap)
         transaction.update(roomDocRef.current, { isReveal: true, updatedAt: serverTimestamp() })
-        setRoom({ ...preData, isReveal: true, updatedAt: serverTimestamp() })
+        dispatch({ type: 'showdown' })
       })
       return 'ok'
     }
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [runTransaction])
+  }, [dispatch, runTransaction])
 
   const resetGame = useCallback(async () => {
     try {
@@ -120,14 +121,14 @@ export const useRoom = (rid: string) => {
           return { ...acc, [cur]: {...initPlayerState, nickname: preData.players[cur].nickname }}
         }, {})
         transaction.update(roomDocRef.current, { players: nextPlayers, isReveal: false, updatedAt: serverTimestamp() })
-        setRoom({ ...preData, players: nextPlayers, isReveal: false, updatedAt: serverTimestamp() })
+        dispatch({ type: 'reset', payload: { players: nextPlayers }})
       })
       return 'ok'
     }
     catch (error) {
       console.error('Transaction failed: ', error)
     }
-  }, [runTransaction])
+  }, [dispatch, runTransaction])
 
   const setNickname = useCallback(async (uid: string, nickname: string) => {
     try {
@@ -142,7 +143,7 @@ export const useRoom = (rid: string) => {
           [uid]: { card: preData.players[uid].card, nickname }
         }
         transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
-        setRoom({ ...preData, players: nextPlayers, updatedAt: serverTimestamp() })
+        dispatch({ type: 'updatePlayers', payload: { players: nextPlayers }})
       })
       showToast('ニックネームを変更しました', 'success')
     }
@@ -150,7 +151,7 @@ export const useRoom = (rid: string) => {
       console.error('Transaction failed: ', error)
       showToast('ニックネームを変更できませんでした', 'error')
     }
-  }, [runTransaction])
+  }, [dispatch, runTransaction, showToast])
 
   return {
     room,

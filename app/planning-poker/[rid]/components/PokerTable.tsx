@@ -1,11 +1,10 @@
 'use client'
 
 import { useRoom } from '@/app/planning-poker/[rid]/components/hooks/useRoom'
-import React, { useCallback, useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useMe } from '@/app/hooks/useMe'
 import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
 import { Button } from '@/app/components/Button'
-import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
 import { Nickname } from '@/app/planning-poker/[rid]/components/Nickname'
 import { PocketCards } from '@/app/planning-poker/[rid]/components/PocketCards'
 import { PlayerState } from '@/app/firestore/room/documentData'
@@ -43,18 +42,6 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     room?.isReveal ? resetGame() : showdown()
   }
 
-  const playerStateWithoutMe = useMemo(() => {
-    if (room?.players === undefined || !me) {
-      return undefined
-    }
-    const players = Object.fromEntries(
-      Object.entries(room.players)
-        .filter(([pid]) => pid !== me.uid)
-        .map(([pid, playerState]) => [pid, playerState])
-    )
-    return Object.keys(players).length ? players : null
-  }, [me, room?.players])
-
   const myPlayerState = useMemo((): PlayerState | undefined => {
     if (!room || !me || !(me.uid in room.players)) {
       return undefined
@@ -64,16 +51,15 @@ export const PokerTable = ({ rid }: { rid: string }) => {
   }, [me, room])
 
   const canShowdown = useMemo(() => {
-    if (!room || !playerStateWithoutMe) {
+    if (!room || Object.values(room.players).length < 2) {
       return false
     }
     return Object.values(room.players).every(ps => ps.card !== null)
-  }, [playerStateWithoutMe, room])
+  }, [room])
 
-  return me && playerStateWithoutMe !== undefined ? (
+  return me ? (
     <>
-      {playerStateWithoutMe === null && <div className="rounded-md bg-indigo-300 px-3.5 py-1 text-sm text-white">他のプレイヤーの参加を待っています。</div>}
-      <BoardSurface players={playerStateWithoutMe ?? {}} result={showdownResult(room?.players ?? {})} isReveal={!!room?.isReveal}>
+      <BoardSurface rid={ridRef.current}>
         <Button className="h-fit w-full" onClick={handleActionButton} disabled={!canShowdown}>
           {room?.isReveal ? 'リセット' : 'ショーダウン'}
         </Button>
