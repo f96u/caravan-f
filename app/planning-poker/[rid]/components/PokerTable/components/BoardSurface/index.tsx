@@ -52,7 +52,7 @@ export const BoardSurface = ({ rid, children }: Props) => {
           <PlayerDisplay players={playerStateWithoutMe} mapping="D" isTurnOver={isReveal} />
         </div>
         <div className="flex items-center justify-center rounded-md bg-indigo-100 p-8 text-5xl font-semibold shadow-sm">
-          {isReveal ? result : '?'}
+          {isReveal ? result : '-'}
         </div>
         <div className="min-h-[6rem]">
           <PlayerDisplay players={playerStateWithoutMe} mapping="F" isTurnOver={isReveal} />
