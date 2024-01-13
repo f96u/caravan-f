@@ -1,13 +1,13 @@
 'use client'
 
-import { useRoom } from '@/app/planning-poker/[rid]/components/hooks/useRoom'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { useMe } from '@/app/hooks/useMe'
-import { BoardSurface } from '@/app/planning-poker/[rid]/components/BoardSurface'
 import { Button } from '@/app/components/Button'
-import { Nickname } from '@/app/planning-poker/[rid]/components/Nickname'
-import { PocketCards } from '@/app/planning-poker/[rid]/components/PocketCards'
 import { PlayerState } from '@/app/firestore/room/documentData'
+import { BoardSurface } from '@/app/planning-poker/[rid]/components/PokerTable/components/BoardSurface'
+import { PocketCards } from '@/app/planning-poker/[rid]/components/PokerTable/components/PoketCard'
+import { useRoom } from '@/app/planning-poker/[rid]/hooks/useRoom'
+import { Nickname } from '@/app/planning-poker/[rid]/components/PokerTable/components/Nickname'
 
 export const PokerTable = ({ rid }: { rid: string }) => {
   const ridRef = useRef(rid)

@@ -1,7 +1,7 @@
 import { PokerTable } from '@/app/planning-poker/[rid]/components/PokerTable'
 import React from 'react'
 import { CheckRoom } from './components/CheckRoom'
-import { RoomProvider } from '@/app/planning-poker/[rid]/components/providers/RoomProvider'
+import { RoomProvider } from '@/app/planning-poker/[rid]/providers/RoomProvider'
 
 export default function PokerRoom({ params }: { params: { rid: string }}) {
   return (

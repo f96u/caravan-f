@@ -1,6 +1,6 @@
 import { CardId, cardIds, PlayerState } from '@/app/firestore/room/documentData'
-import CardButton from '@/app/planning-poker/[rid]/components/CardButton'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import CardButton from '@/app/planning-poker/[rid]/components/PokerTable/components/PoketCard/components/CardButton'
 
 type Props = {
   isReveal: boolean

@@ -1,6 +1,6 @@
 import { ReactNode, useCallback } from 'react'
-import Card from '@/app/planning-poker/[rid]/components/Card'
 import { CardId } from '@/app/firestore/room/documentData'
+import Card from '@/app/planning-poker/[rid]/components/PokerTable/components/Card'
 
 type Props = {
   id: CardId

@@ -1,6 +1,6 @@
 import { ReactNode, useCallback } from 'react'
-import Card from '@/app/planning-poker/[rid]/components/Card'
 import { XMark } from '@/app/svg/XMark'
+import Card from '@/app/planning-poker/[rid]/components/PokerTable/components/Card'
 
 type Props = {
   children: ReactNode

@@ -1,8 +1,8 @@
 'use client'
 import { ReactNode, Reducer, useReducer } from 'react'
-import { RoomContext, RoomDispatchContext } from '@/app/planning-poker/[rid]/components/contexts/RoomContext'
+import { RoomContext, RoomDispatchContext } from '@/app/planning-poker/[rid]/contexts/RoomContext'
 import { DocumentData } from '@/app/firestore/room/documentData'
-import { RoomActions } from '@/app/planning-poker/[rid]/components/Actions/RoomActions'
+import { RoomActions } from '@/app/planning-poker/[rid]/Actions/RoomActions'
 import { serverTimestamp } from '@firebase/firestore'
 
 const reducer: Reducer<DocumentData | undefined, RoomActions> = (room: DocumentData | undefined, action: RoomActions): DocumentData => {

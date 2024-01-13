@@ -1,9 +1,9 @@
 import React, { ReactNode, useMemo } from 'react'
-import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
-import { PlayerDisplay } from '@/app/planning-poker/[rid]/components/PlayerDisplay'
-import { useRoom } from '@/app/planning-poker/[rid]/components/hooks/useRoom'
 import { useMe } from '@/app/hooks/useMe'
-import { showdownResult } from '@/app/planning-poker/[rid]/components/utils/showdownResult'
+import { getKeys } from '@/app/planning-poker/[rid]/utils/getKey'
+import { PlayerDisplay } from './components/PlayerDisplay'
+import { useRoom } from '@/app/planning-poker/[rid]/hooks/useRoom'
+import { showdownResult } from '@/app/planning-poker/[rid]/utils/showdownResult'
 
 type Props = {
   rid: string

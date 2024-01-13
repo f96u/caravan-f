@@ -1,7 +1,7 @@
 import React from 'react'
-import { getKeys } from '@/app/planning-poker/[rid]/components/utils/getKey'
 import { DocumentData } from '@/app/firestore/room/documentData'
-import CardWithExit from '@/app/planning-poker/[rid]/components/CardWithExit'
+import { getKeys } from '@/app/planning-poker/[rid]/utils/getKey'
+import CardWithExit from './components/CardWithExist'
 
 const displayMapData = [
   {},
