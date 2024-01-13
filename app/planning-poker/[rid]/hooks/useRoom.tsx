@@ -23,6 +23,7 @@ export const useRoom = (rid: string) => {
           console.error('Document does not exists!')
         }
         const preData = shapingData(docSnap)
+        dispatch({ type: 'set', payload: { room: preData }})
         if (uid in preData.players) {
           return
         }
