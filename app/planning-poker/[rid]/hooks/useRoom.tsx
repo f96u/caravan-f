@@ -43,6 +43,9 @@ export const useRoom = (rid: string) => {
       roomDocRef.current,
       docSnap => {
         if (!docSnap.exists()) {
+          // NOTE: 他プレイヤーによって部屋を削除された場合、その旨を伝えて/planning-pokerへリダイレクト
+          showToast('部屋が見つかりません', 'warning')
+          router.replace('/planning-poker')
           throw 'Document does not exists!'
         }
         const docData = shapingData(docSnap)
