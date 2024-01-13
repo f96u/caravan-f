@@ -20,7 +20,7 @@ type Props = {
   isTurnOver: boolean
 }
 export const PlayerDisplay = ({ players, mapping, isTurnOver }: Props) => {
-  const otherPlayerIds = getKeys(players)
+  const otherPlayerIds = getKeys(players).sort()
   const numPlayer = otherPlayerIds.length
   const displayMap = displayMapData[numPlayer]
   const elementNum = displayMap[mapping]
