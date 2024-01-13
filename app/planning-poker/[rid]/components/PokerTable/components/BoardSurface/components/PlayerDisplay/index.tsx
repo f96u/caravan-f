@@ -23,7 +23,7 @@ export const PlayerDisplay = ({ players, mapping, isTurnOver }: Props) => {
   const otherPlayerIds = getKeys(players)
   const numPlayer = otherPlayerIds.length
   const displayMap = displayMapData[numPlayer]
-  const elementNum = displayMap['B']
+  const elementNum = displayMap[mapping]
   if (elementNum === undefined) {
     return null
   }
