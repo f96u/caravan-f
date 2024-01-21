@@ -158,12 +158,32 @@ export const useRoom = () => {
     }
   }, [dispatch, runTransaction, showToast])
 
+  const ejectPlayer = useCallback(async (pid: string) => {
+    try {
+      await runTransaction(async (transaction) => {
+        const docSnap = await transaction.get(roomDocRef.current)
+        if (!docSnap.exists()) {
+          throw 'Document does not exists!'
+        }
+        const preData = shapingData(docSnap)
+        const { [pid]: _, ...nextPlayers } = preData.players
+        transaction.update(roomDocRef.current, { players: nextPlayers, updatedAt: serverTimestamp() })
+        dispatch({ type: 'updatePlayers', payload: { players: nextPlayers }})
+      })
+    }
+    catch (error) {
+      console.error('Transaction failed: ', error)
+      showToast('ユーザーを退席させられませんでした', 'error')
+    }
+  }, [dispatch, runTransaction, showToast])
+
   return {
     room,
     entry,
     selectCard,
     showdown,
     resetGame,
-    setNickname
+    setNickname,
+    ejectPlayer,
   }
 }

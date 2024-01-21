@@ -21,7 +21,7 @@ type Props = {
 }
 
 export const BoardSurface = ({ children }: Props) => {
-  const { room } = useRoom()
+  const { room, ejectPlayer } = useRoom()
   const { me } = useMe()
 
   const playerStateWithoutMe = useMemo(() => {
@@ -46,39 +46,39 @@ export const BoardSurface = ({ children }: Props) => {
 
   const displayMap = useMemo(() => displayMapData[numPlayer], [numPlayer])
 
-  const otherPlayerIds = getKeys(playerStateWithoutMe).sort()
+  const otherPlayerIds = Object.keys(playerStateWithoutMe).sort()
   return (
     <>
       {numPlayer < 1 && <div className="rounded-md bg-indigo-300 px-3.5 py-1 text-sm text-white">他のプレイヤーの参加を待っています。</div>}
       <div className={`mb-4 grid gap-4 ${numPlayer % 2 ? 'grid-cols-3' : 'grid-cols-2' }`}>
         {!!(numPlayer % 2) && <div className="min-h-[6rem]">
-          {displayMap['A'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['A']]]} isTurnOver={isReveal} />}
+          {displayMap['A'] !== undefined && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['A']]]} isTurnOver={isReveal} onClick={() => ejectPlayer(otherPlayerIds[displayMap['A']])} />}
         </div>}
         <div className="min-h-[6rem]">
-          {displayMap['B'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['B']]]} isTurnOver={isReveal} />}
+          {displayMap['B'] !== undefined && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['B']]]} isTurnOver={isReveal} onClick={() => ejectPlayer(otherPlayerIds[displayMap['B']])} />}
         </div>
         <div className="min-h-[6rem]">
-          {displayMap['C'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['C']]]} isTurnOver={isReveal} />}
+          {displayMap['C'] !== undefined && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['C']]]} isTurnOver={isReveal} onClick={() => ejectPlayer(otherPlayerIds[displayMap['C']])} />}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="min-h-[6rem]">
-          {displayMap['D'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['D']]]} isTurnOver={isReveal} />}
+          {displayMap['D'] !== undefined && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['D']]]} isTurnOver={isReveal} onClick={() => ejectPlayer(otherPlayerIds[displayMap['D']])} />}
         </div>
         <div className="flex items-center justify-center rounded-md bg-indigo-100 p-8 text-5xl font-semibold shadow-sm">
           {isReveal ? result : '-'}
         </div>
         <div className="min-h-[6rem]">
-          {displayMap['F'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['F']]]} isTurnOver={isReveal} />}
+          {displayMap['F'] !== undefined && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['F']]]} isTurnOver={isReveal} onClick={() => ejectPlayer(otherPlayerIds[displayMap['F']])} />}
         </div>
         <div className="min-h-[6rem]">
-          {displayMap['G'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['G']]]} isTurnOver={isReveal} />}
+          {displayMap['G'] !== undefined && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['G']]]} isTurnOver={isReveal} onClick={() => ejectPlayer(otherPlayerIds[displayMap['G']])} />}
         </div>
         <div className="flex flex-col justify-center gap-2">
           {children}
         </div>
         <div className="min-h-[6rem]">
-          {displayMap['I'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['I']]]} isTurnOver={isReveal} />}
+          {displayMap['I'] !== undefined && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['I']]]} isTurnOver={isReveal} onClick={() => ejectPlayer(otherPlayerIds[displayMap['I']])} />}
         </div>
       </div>
     </>
