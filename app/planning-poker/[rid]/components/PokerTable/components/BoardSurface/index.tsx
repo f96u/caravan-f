@@ -6,12 +6,11 @@ import { useRoom } from '@/app/planning-poker/[rid]/hooks/useRoom'
 import { showdownResult } from '@/app/planning-poker/[rid]/utils/showdownResult'
 
 type Props = {
-  rid: string
   children: ReactNode
 }
 
-export const BoardSurface = ({ rid, children }: Props) => {
-  const { room } = useRoom(rid)
+export const BoardSurface = ({ children }: Props) => {
+  const { room } = useRoom()
   const { me } = useMe()
 
   const playerStateWithoutMe = useMemo(() => {

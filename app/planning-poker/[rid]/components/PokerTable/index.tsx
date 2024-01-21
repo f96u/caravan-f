@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useContext, useEffect, useMemo, useRef } from 'react'
 import { useMe } from '@/app/hooks/useMe'
 import { Button } from '@/app/components/Button'
 import { PlayerState } from '@/app/firestore/room/documentData'
@@ -8,9 +8,9 @@ import { BoardSurface } from '@/app/planning-poker/[rid]/components/PokerTable/c
 import { PocketCards } from '@/app/planning-poker/[rid]/components/PokerTable/components/PoketCard'
 import { useRoom } from '@/app/planning-poker/[rid]/hooks/useRoom'
 import { Nickname } from '@/app/planning-poker/[rid]/components/PokerTable/components/Nickname'
+import { RoomIdContext } from '@/app/planning-poker/[rid]/contexts/RoomContext'
 
-export const PokerTable = ({ rid }: { rid: string }) => {
-  const ridRef = useRef(rid)
+export const PokerTable = () => {
   const { me } = useMe()
   const {
     room,
@@ -19,7 +19,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
     showdown,
     resetGame,
     setNickname,
-  } = useRoom(ridRef.current)
+  } = useRoom()
   const initRef = useRef(false)
 
   //NOTE: 部屋に入室する
@@ -59,7 +59,7 @@ export const PokerTable = ({ rid }: { rid: string }) => {
 
   return me ? (
     <>
-      <BoardSurface rid={ridRef.current}>
+      <BoardSurface>
         <Button className="h-fit w-full" onClick={handleActionButton} disabled={!canShowdown}>
           {room?.isReveal ? 'リセット' : 'ショーダウン'}
         </Button>

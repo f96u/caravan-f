@@ -8,8 +8,8 @@ export default function PokerRoom({ params }: { params: { rid: string }}) {
     <main>
       <CheckRoom rid={params.rid} />
       <h1 className="my-10 text-center text-2xl">ポーカールーム</h1>
-      <RoomProvider>
-        <PokerTable rid={params.rid} />
+      <RoomProvider rid={params.rid}>
+        <PokerTable />
       </RoomProvider>
     </main>
   )

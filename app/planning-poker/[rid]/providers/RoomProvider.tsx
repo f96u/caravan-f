@@ -1,6 +1,6 @@
 'use client'
 import { ReactNode, Reducer, useReducer } from 'react'
-import { RoomContext, RoomDispatchContext } from '@/app/planning-poker/[rid]/contexts/RoomContext'
+import { RoomContext, RoomDispatchContext, RoomIdContext } from '@/app/planning-poker/[rid]/contexts/RoomContext'
 import { DocumentData } from '@/app/firestore/room/documentData'
 import { RoomActions } from '@/app/planning-poker/[rid]/Actions/RoomActions'
 import { serverTimestamp } from '@firebase/firestore'
@@ -32,16 +32,19 @@ const reducer: Reducer<DocumentData | undefined, RoomActions> = (room: DocumentD
 }
 
 type Props = {
+  rid: string
   children: ReactNode
 }
 
-export const RoomProvider = ({ children}: Props) => {
+export const RoomProvider = ({ rid, children}: Props) => {
   const [room, dispatch] = useReducer(reducer, undefined)
   return (
-    <RoomContext.Provider value={room}>
-      <RoomDispatchContext.Provider value={dispatch}>
-        {children}
-      </RoomDispatchContext.Provider>
-    </RoomContext.Provider>
+    <RoomIdContext.Provider value={rid}>
+      <RoomContext.Provider value={room}>
+        <RoomDispatchContext.Provider value={dispatch}>
+          {children}
+        </RoomDispatchContext.Provider>
+      </RoomContext.Provider>
+    </RoomIdContext.Provider>
   )
 }

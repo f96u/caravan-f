@@ -5,9 +5,10 @@ import { CardId, DocumentData, initPlayerState, PlayerState, shapingData } from 
 import { useFirestore } from '@/app/hooks/useFirestore'
 import { useRouter } from 'next/navigation'
 import { useToast } from '@/app/context/ToastContext'
-import { RoomContext, RoomDispatchContext } from '@/app/planning-poker/[rid]/contexts/RoomContext'
+import { RoomContext, RoomDispatchContext, RoomIdContext } from '@/app/planning-poker/[rid]/contexts/RoomContext'
 
-export const useRoom = (rid: string) => {
+export const useRoom = () => {
+  const rid = useContext(RoomIdContext)
   const { runTransaction } = useFirestore()
   const room = useContext(RoomContext)
   const dispatch = useContext(RoomDispatchContext)
