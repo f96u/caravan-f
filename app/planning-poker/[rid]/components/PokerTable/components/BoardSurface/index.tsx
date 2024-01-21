@@ -5,6 +5,17 @@ import { PlayerDisplay } from './components/PlayerDisplay'
 import { useRoom } from '@/app/planning-poker/[rid]/hooks/useRoom'
 import { showdownResult } from '@/app/planning-poker/[rid]/utils/showdownResult'
 
+const displayMapData = [
+  {},
+  { B: 0 },
+  { B: 0, C: 1 },
+  { B: 0, D: 1, F: 2 },
+  { B: 0, C: 1, D: 2, F: 3 },
+  { A: 1, B: 0, C: 2, D: 3, F: 4 },
+  { B: 0, C: 1, D: 2, F: 3, G: 4, I: 5 },
+  { A: 1, B: 0, C: 2, D: 3, F: 4, G: 5, I: 6 },
+]
+
 type Props = {
   children: ReactNode
 }
@@ -32,38 +43,42 @@ export const BoardSurface = ({ children }: Props) => {
   const isReveal = useMemo(() => !!room?.isReveal, [room?.isReveal])
 
   const numPlayer = getKeys(playerStateWithoutMe).length
+
+  const displayMap = useMemo(() => displayMapData[numPlayer], [numPlayer])
+
+  const otherPlayerIds = getKeys(playerStateWithoutMe).sort()
   return (
     <>
       {numPlayer < 1 && <div className="rounded-md bg-indigo-300 px-3.5 py-1 text-sm text-white">他のプレイヤーの参加を待っています。</div>}
       <div className={`mb-4 grid gap-4 ${numPlayer % 2 ? 'grid-cols-3' : 'grid-cols-2' }`}>
         {!!(numPlayer % 2) && <div className="min-h-[6rem]">
-          <PlayerDisplay players={playerStateWithoutMe} mapping="A" isTurnOver={isReveal} />
+          {displayMap['A'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['A']]]} isTurnOver={isReveal} />}
         </div>}
         <div className="min-h-[6rem]">
-          <PlayerDisplay players={playerStateWithoutMe} mapping="B" isTurnOver={isReveal} />
+          {displayMap['B'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['B']]]} isTurnOver={isReveal} />}
         </div>
         <div className="min-h-[6rem]">
-          <PlayerDisplay players={playerStateWithoutMe} mapping="C" isTurnOver={isReveal} />
+          {displayMap['C'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['C']]]} isTurnOver={isReveal} />}
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="min-h-[6rem]">
-          <PlayerDisplay players={playerStateWithoutMe} mapping="D" isTurnOver={isReveal} />
+          {displayMap['D'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['D']]]} isTurnOver={isReveal} />}
         </div>
         <div className="flex items-center justify-center rounded-md bg-indigo-100 p-8 text-5xl font-semibold shadow-sm">
           {isReveal ? result : '-'}
         </div>
         <div className="min-h-[6rem]">
-          <PlayerDisplay players={playerStateWithoutMe} mapping="F" isTurnOver={isReveal} />
+          {displayMap['F'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['F']]]} isTurnOver={isReveal} />}
         </div>
         <div className="min-h-[6rem]">
-          <PlayerDisplay players={playerStateWithoutMe} mapping="G" isTurnOver={isReveal} />
+          {displayMap['G'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['G']]]} isTurnOver={isReveal} />}
         </div>
         <div className="flex flex-col justify-center gap-2">
           {children}
         </div>
         <div className="min-h-[6rem]">
-          <PlayerDisplay players={playerStateWithoutMe} mapping="I" isTurnOver={isReveal} />
+          {displayMap['I'] && <PlayerDisplay playerState={playerStateWithoutMe[otherPlayerIds[displayMap['I']]]} isTurnOver={isReveal} />}
         </div>
       </div>
     </>
