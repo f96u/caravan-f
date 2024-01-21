@@ -1,6 +1,6 @@
 'use client'
 
-import React, { createContext, useContext, useRef, useState } from 'react'
+import React, { createContext, useCallback, useContext, useRef, useState } from 'react'
 import { ToastType } from '@/app/type/ToastType'
 import { Toast } from '@/app/components/Toast'
 
@@ -24,7 +24,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
   const [isShowToast, setIsShowToast] = useState(false)
   const timerIdRef = useRef<number>()
 
-  const showToast = (message: string, type: ToastType) => {
+  const showToast = useCallback((message: string, type: ToastType) => {
     window.clearTimeout(timerIdRef.current)
     setToastMessage(message)
     setToastType(type)
@@ -32,12 +32,12 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     timerIdRef.current = window.setTimeout(() => {
       setIsShowToast(false)
     }, DISPLAY_TIME)
-  }
+  }, [])
 
-  const closeToast = () => {
+  const closeToast = useCallback(() => {
     window.clearTimeout(timerIdRef.current)
     setIsShowToast(false)
-  }
+  }, [])
 
   return (
     <ToastContext.Provider value={{ showToast, closeToast }}>

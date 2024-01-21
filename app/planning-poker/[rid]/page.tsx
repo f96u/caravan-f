@@ -1,14 +1,16 @@
 import { PokerTable } from '@/app/planning-poker/[rid]/components/PokerTable'
-import { routeMap } from '@/app/routes'
-import { Navigation } from '@/app/components/Navigation'
 import React from 'react'
+import { CheckRoom } from './components/CheckRoom'
+import { RoomProvider } from '@/app/planning-poker/[rid]/providers/RoomProvider'
 
 export default function PokerRoom({ params }: { params: { rid: string }}) {
   return (
     <main>
-      <Navigation currentPathname={routeMap.planningPoker.path} />
-      <h1 className="text-2xl text-center my-10">ポーカールーム</h1>
-      <PokerTable rid={params.rid} />
+      <CheckRoom rid={params.rid} />
+      <h1 className="my-10 text-center text-2xl">ポーカールーム</h1>
+      <RoomProvider rid={params.rid}>
+        <PokerTable />
+      </RoomProvider>
     </main>
   )
 }

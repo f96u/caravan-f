@@ -12,7 +12,7 @@ type Props = {
 const SuccessToast = ({message, onCloseToast}: { message: string, onCloseToast: () => void }) => {
   return (
     <div
-      className="animate-fede-out absolute bottom-5 left-5 w-72 px-2 py-4 rounded-xl flex text-green-700 bg-green-200 border-green-700 items-center">
+      className="animate-fede-out absolute bottom-5 left-5 flex w-72 items-center rounded-xl border-green-700 bg-green-200 px-2 py-4 text-green-700">
       <div>
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -20,7 +20,7 @@ const SuccessToast = ({message, onCloseToast}: { message: string, onCloseToast: 
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="h-6 w-6"
         >
           <path
             strokeLinecap="round"
@@ -41,8 +41,8 @@ const WarningToast = ({ message, onCloseToast }: { message: string, onCloseToast
   return (
     <div
       className="
-        animate-fade-out absolute bottom-5 left-5 w-72 px-2 py-4 rounded-xl flex
-        text-yellow-700 bg-yellow-200 border-yellow-700 items-center
+        absolute bottom-5 left-5 flex w-72 animate-fade-out items-center rounded-xl border-yellow-700
+        bg-yellow-200 px-2 py-4 text-yellow-700
       "
     >
       <div>
@@ -52,7 +52,7 @@ const WarningToast = ({ message, onCloseToast }: { message: string, onCloseToast
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="h-6 w-6"
         >
           <path
             strokeLinecap="round"
@@ -69,7 +69,7 @@ const WarningToast = ({ message, onCloseToast }: { message: string, onCloseToast
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="h-6 w-6"
         >
           <path
             strokeLinecap="round"
@@ -86,8 +86,8 @@ const ErrorToast = ({ message, onCloseToast }: { message: string, onCloseToast: 
   return (
     <div
       className="
-        animate-fade-out absolute bottom-5 left-5 w-72 px-2 py-4 rounded-xl flex
-        text-red-700 bg-red-200 border-red-700 items-center"
+        absolute bottom-5 left-5 flex w-72 animate-fade-out items-center rounded-xl border-red-700
+        bg-red-200 px-2 py-4 text-red-700"
     >
       <div>
         <svg
@@ -96,7 +96,7 @@ const ErrorToast = ({ message, onCloseToast }: { message: string, onCloseToast: 
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="h-6 w-6"
         >
           <path
             strokeLinecap="round"
@@ -113,7 +113,7 @@ const ErrorToast = ({ message, onCloseToast }: { message: string, onCloseToast: 
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-6 h-6"
+          className="h-6 w-6"
         >
           <path
             strokeLinecap="round"
@@ -132,19 +132,19 @@ export const Toast = ({ message, toastType }: Props) => {
   switch (toastType) {
     case 'success':
       return (
-        <div className="fixed pointer-events-none w-screen h-screen">
+        <div className="pointer-events-none fixed h-screen w-screen">
           <SuccessToast message={message} onCloseToast={closeToast} />
         </div>
       )
     case 'warning':
       return (
-        <div className="fixed pointer-events-none w-screen h-screen">
+        <div className="pointer-events-none fixed h-screen w-screen">
           <WarningToast message={message} onCloseToast={closeToast} />
         </div>
       )
     case 'error':
       return (
-        <div className="fixed pointer-events-none w-screen h-screen">
+        <div className="pointer-events-none fixed h-screen w-screen">
           <ErrorToast message={message} onCloseToast={closeToast} />
         </div>
       )
