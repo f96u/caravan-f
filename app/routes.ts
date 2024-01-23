@@ -16,6 +16,10 @@ export const routeMap: {[key: string]: Route} = {
     path: '/planning-poker',
     name: 'プランニングポーカー'
   },
+  householdAccount: {
+    path: '/household-account',
+    name: '家計簿'
+  },
 }
 
 export const routes = Object.values(routeMap)
