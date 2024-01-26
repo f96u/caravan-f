@@ -3,6 +3,9 @@ import type { Metadata } from 'next'
 import { Zen_Kaku_Gothic_Antique } from 'next/font/google'
 import './firebaseApp'
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { Navigation } from '@/app/components/Navigation'
+import React from 'react'
+import { ToastProvider } from '@/app/context/ToastContext'
 
 const zenKakuGothicAntique = Zen_Kaku_Gothic_Antique({ weight: '400', subsets: ['latin'] })
 
@@ -18,7 +21,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="jp">
-      <body className={zenKakuGothicAntique.className}>{children}</body>
+      <body className={zenKakuGothicAntique.className}>
+        <Navigation />
+        <ToastProvider>
+          {children}
+        </ToastProvider>
+      </body>
       <GoogleAnalytics gaId="G-BTDWXL1FC2" />
     </html>
   )

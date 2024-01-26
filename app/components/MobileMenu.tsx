@@ -11,11 +11,8 @@ const getHeight = (elementRef: RefObject<HTMLDivElement>) => {
   return typeof height === 'number' ? height : MOBILE_MENU_HEIGHT_FALL_BACK
 }
 
-type Props = {
-  currentPathname: string
-}
-
-export const MobileMenu = ({ currentPathname }: Props) => {
+export const MobileMenu = () => {
+  const currentPathname = window.location.pathname
   const [mobileMenuState, setMobileMenuState] = useState({
     show: false,
     enableAnimate: false,
