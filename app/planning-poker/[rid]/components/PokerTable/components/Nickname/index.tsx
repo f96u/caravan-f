@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from '@/app/components/Button'
+import { Input } from '@/app/components/Input'
 
 type Props = {
   nickname: string
@@ -29,13 +30,12 @@ export const Nickname = ({ nickname, onSubmit }: Props) => {
     <div className="flex gap-1">
       {isEdit ? (
         <>
-          <input
+          <Input
             id="nickname"
             name="nickname"
             placeholder="ニックネーム"
             value={draftNickname}
             onChange={changeNickname}
-            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
           />
           <Button onClick={handleChange}>変更</Button>
         </>
