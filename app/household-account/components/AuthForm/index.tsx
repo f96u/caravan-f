@@ -1,5 +1,3 @@
-'use client'
-
 import { createUserWithEmailAndPassword, signOut, signInWithEmailAndPassword, User } from '@firebase/auth'
 import { auth } from '@/app/firebaseApp'
 import { useContext, useEffect, useState } from 'react'
