@@ -47,12 +47,15 @@ export const AuthForm = () => {
   }
   return (
     <div>
-      ユーザー:{user?.uid ?? 'null'}
-      <Input value={email} onChange={e => setEmail(e.target.value)} />
-      <Input value={password} onChange={e => setPassword(e.target.value)} />
-      <Button onClick={createUser}>新規作成</Button>
-      <Button onClick={login}>ログイン</Button>
-      <Button onClick={logout}>ログアウト</Button>
+      <div className="my-4 flex flex-col">
+        ID:<Input value={email} onChange={e => setEmail(e.target.value)} />
+        PASS:<Input value={password} onChange={e => setPassword(e.target.value)} />
+      </div>
+      <div className="space-x-1">
+        <Button onClick={createUser}>新規作成</Button>
+        <Button onClick={login}>ログイン</Button>
+        <Button onClick={logout}>ログアウト</Button>
+      </div>
     </div>
 
   )
