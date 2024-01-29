@@ -11,7 +11,7 @@ export const AuthButton = () => {
     <>
       <button className="rounded-md p-2 text-sm text-gray-300 hover:bg-sub hover:text-white" onClick={() => setOpen(true)}><Login /></button>
       <Dialog open={open} onSubmit={() => setOpen(false)} onCancel={() => setOpen(false)}>
-        <div className="bg-base px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+        <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
           <div className="sm:flex sm:items-start">
             <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-main text-white sm:mx-0 sm:size-10">
               <Login />
