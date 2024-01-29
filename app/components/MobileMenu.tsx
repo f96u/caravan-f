@@ -3,6 +3,7 @@
 // NOTE: モバイル用のメニュー表示の高さとして十分に高い数値を指定
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { routes } from '@/app/routes'
+import { AuthButton } from '@/app/components/Navigation/components/AuthButton'
 
 const MOBILE_MENU_HEIGHT_FALL_BACK = 2000
 
@@ -45,7 +46,7 @@ export const MobileMenu = () => {
 
   return (
     <div className="absolute w-full sm:hidden">
-      <div className="inset-y-0 left-0 flex items-center px-2">
+      <div className="inset-y-0 left-0 flex items-center justify-between px-2">
         <button
           type="button"
           className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -62,6 +63,7 @@ export const MobileMenu = () => {
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
+        <AuthButton />
       </div>
       <div className="pointer-events-none relative">
         <div

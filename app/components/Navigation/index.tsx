@@ -11,15 +11,17 @@ export const Navigation = () => {
         <div className="relative flex h-16 items-center justify-between">
           <MobileMenu />
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
-            <div className="hidden sm:ml-6 sm:block">
-              <div className="flex space-x-4">
-                {routes.map(route => (
-                  <NavigationButton key={route.path} route={route} />
-                ))}
+            <div className="hidden w-full sm:ml-6 sm:block">
+              <div className="flex flex-row justify-between">
+                <div className="flex space-x-4">
+                  {routes.map(route => (
+                    <NavigationButton key={route.path} route={route} />
+                  ))}
+                </div>
+                <AuthButton />
               </div>
             </div>
           </div>
-          <AuthButton />
         </div>
       </div>
     </nav>
