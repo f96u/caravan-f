@@ -3,6 +3,7 @@
 // NOTE: モバイル用のメニュー表示の高さとして十分に高い数値を指定
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { routes } from '@/app/routes'
+import { AuthButton } from '@/app/components/Navigation/components/AuthButton'
 
 const MOBILE_MENU_HEIGHT_FALL_BACK = 2000
 
@@ -11,11 +12,8 @@ const getHeight = (elementRef: RefObject<HTMLDivElement>) => {
   return typeof height === 'number' ? height : MOBILE_MENU_HEIGHT_FALL_BACK
 }
 
-type Props = {
-  currentPathname: string
-}
-
-export const MobileMenu = ({ currentPathname }: Props) => {
+export const MobileMenu = () => {
+  const currentPathname = window.location.pathname
   const [mobileMenuState, setMobileMenuState] = useState({
     show: false,
     enableAnimate: false,
@@ -48,7 +46,7 @@ export const MobileMenu = ({ currentPathname }: Props) => {
 
   return (
     <div className="absolute w-full sm:hidden">
-      <div className="inset-y-0 left-0 flex items-center px-2">
+      <div className="inset-y-0 left-0 flex items-center justify-between px-2">
         <button
           type="button"
           className="relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white"
@@ -58,13 +56,14 @@ export const MobileMenu = ({ currentPathname }: Props) => {
         >
           <span className="absolute -inset-0.5"></span>
           <span className="sr-only">Open main menu</span>
-          <svg className="block h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+          <svg className="block size-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
           </svg>
-          <svg className="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
+          <svg className="hidden size-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
+        <AuthButton />
       </div>
       <div className="pointer-events-none relative">
         <div
