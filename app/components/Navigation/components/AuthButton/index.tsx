@@ -1,6 +1,6 @@
 'use client'
 import { Dialog } from '@/app/components/Dialog'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Login } from '@/app/svg/Login'
 import { Dialog as HeadlessDialog } from '@headlessui/react'
 import { UserContext, UserDispatchContext } from '@/app/context/UserContext'
@@ -14,8 +14,14 @@ export const AuthButton = () => {
   const user = useContext(UserContext)
   const dispatch = useContext(UserDispatchContext)
   const [open, setOpen] = useState(false)
+  const [isLoginForm, setIsLoginForm] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+
+  const openDialog = () => {
+    setIsLoginForm(user !== null)
+    setOpen(true)
+  }
 
   const login = () => {
     signInWithEmailAndPassword(auth, email, password)
@@ -44,30 +50,31 @@ export const AuthButton = () => {
 
   return user !== undefined ? (
     <>
-      <button className="rounded-md p-1 text-sm text-gray-300 hover:bg-sub hover:text-white" onClick={() => setOpen(true)}>
+      <button className="rounded-md p-1 text-sm text-gray-300 hover:bg-sub hover:text-white" onClick={openDialog}>
         {user ? <Logout /> : <Login />}
       </button>
       <Dialog open={open} onClose={() => setOpen(false)}>
-        {user ? (
+        {isLoginForm ? (
           <>
-          <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-            <div className="sm:flex sm:items-start">
-              <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-main text-white sm:mx-0 sm:size-10">
-                <Logout />
-              </div>
-              <div className="mt-3 grow text-center sm:ml-4 sm:mt-0 sm:text-left">
-                <HeadlessDialog.Title as="h3" className="font-semibold leading-6 text-black">
-                  ログアウトしますか
-                </HeadlessDialog.Title>
+            <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+              <div className="sm:flex sm:items-start">
+                <div className="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-main text-white sm:mx-0 sm:size-10">
+                  <Logout />
+                </div>
+                <div className="mt-3 grow text-center sm:ml-4 sm:mt-0 sm:text-left">
+                  <HeadlessDialog.Title as="h3" className="font-semibold leading-6 text-black">
+                    ログアウトしますか
+                  </HeadlessDialog.Title>
+                </div>
               </div>
             </div>
-          </div>
             <div className="flex justify-center space-x-2 bg-base px-4 py-3 sm:flex sm:flex-row sm:px-6">
               <Button onClick={logout}>ログアウト</Button>
               <Button onClick={() => setOpen(false)}>キャンセル</Button>
             </div>
           </>
         ) : (
+
           <>
             <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
@@ -87,7 +94,7 @@ export const AuthButton = () => {
                 </div>
               </div>
             </div>
-            <div className="justify-end space-x-1 bg-base px-4 py-3 sm:flex sm:flex-row sm:px-6">
+            <div className="justify-end space-x-2 bg-base px-4 py-3 sm:flex sm:flex-row sm:px-6">
               <Button
                 onClick={login}
               >
