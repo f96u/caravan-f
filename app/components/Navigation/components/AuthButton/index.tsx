@@ -42,9 +42,9 @@ export const AuthButton = () => {
       })
   }
 
-  return (
+  return user !== undefined ? (
     <>
-      <button className="rounded-md p-2 text-sm text-gray-300 hover:bg-sub hover:text-white" onClick={() => setOpen(true)}>
+      <button className="rounded-md p-1 text-sm text-gray-300 hover:bg-sub hover:text-white" onClick={() => setOpen(true)}>
         {user ? <Logout /> : <Login />}
       </button>
       <Dialog open={open} onClose={() => setOpen(false)}>
@@ -103,5 +103,5 @@ export const AuthButton = () => {
         )}
       </Dialog>
     </>
-  )
+  ) : null
 }
