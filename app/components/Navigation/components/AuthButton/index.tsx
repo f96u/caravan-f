@@ -87,8 +87,8 @@ export const AuthButton = () => {
                   </HeadlessDialog.Title>
                   <div className="mt-2">
                     <div className="my-4 flex flex-col">
-                      ID:<Input value={email} onChange={e => setEmail(e.target.value)} />
-                      PASS:<Input value={password} onChange={e => setPassword(e.target.value)} />
+                      ID:<Input type="email" value={email} onChange={e => setEmail(e.target.value)} />
+                      PASS:<Input type="password" value={password} onChange={e => setPassword(e.target.value)} />
                     </div>
                   </div>
                 </div>
