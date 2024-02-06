@@ -1,6 +1,4 @@
 import React from 'react'
-import { AuthForm } from '@/app/household-account/components/AuthForm'
-import { Dialog } from '@/app/components/Dialog'
 
 export default function HouseholdAccount() {
   return (
