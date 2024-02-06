@@ -25,6 +25,14 @@ const config: Config = {
             opacity: '0'
           }
         }
+      },
+      colors: {
+        transparent: 'transparent',
+        current: 'currentColor',
+        base: '#EEEEEE',
+        main: '#222831',
+        sub: '#393E46',
+        accent: '#00ADB5',
       }
     },
   },

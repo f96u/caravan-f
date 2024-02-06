@@ -14,7 +14,7 @@ export default function CardWithExit({ children, selected, onClick }: Props) {
   return (
     <div className="relative">
       <button
-        className="absolute flex h-full w-full items-center justify-center rounded-md bg-gray-700 text-white opacity-0 hover:opacity-100"
+        className="absolute flex size-full items-center justify-center rounded-md bg-gray-700 text-white opacity-0 hover:opacity-100"
         onClick={handleClick}
       >
         <XMark />

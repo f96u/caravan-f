@@ -20,7 +20,7 @@ const SuccessToast = ({message, onCloseToast}: { message: string, onCloseToast: 
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="size-6"
         >
           <path
             strokeLinecap="round"
@@ -52,7 +52,7 @@ const WarningToast = ({ message, onCloseToast }: { message: string, onCloseToast
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="size-6"
         >
           <path
             strokeLinecap="round"
@@ -69,7 +69,7 @@ const WarningToast = ({ message, onCloseToast }: { message: string, onCloseToast
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="size-6"
         >
           <path
             strokeLinecap="round"
@@ -96,7 +96,7 @@ const ErrorToast = ({ message, onCloseToast }: { message: string, onCloseToast: 
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="size-6"
         >
           <path
             strokeLinecap="round"
@@ -113,7 +113,7 @@ const ErrorToast = ({ message, onCloseToast }: { message: string, onCloseToast: 
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="h-6 w-6"
+          className="size-6"
         >
           <path
             strokeLinecap="round"
@@ -132,19 +132,19 @@ export const Toast = ({ message, toastType }: Props) => {
   switch (toastType) {
     case 'success':
       return (
-        <div className="pointer-events-none fixed h-screen w-screen">
+        <div className="size-screen pointer-events-none fixed">
           <SuccessToast message={message} onCloseToast={closeToast} />
         </div>
       )
     case 'warning':
       return (
-        <div className="pointer-events-none fixed h-screen w-screen">
+        <div className="size-screen pointer-events-none fixed">
           <WarningToast message={message} onCloseToast={closeToast} />
         </div>
       )
     case 'error':
       return (
-        <div className="pointer-events-none fixed h-screen w-screen">
+        <div className="size-screen pointer-events-none fixed">
           <ErrorToast message={message} onCloseToast={closeToast} />
         </div>
       )
