@@ -4,17 +4,13 @@ export type Route = {
 }
 
 export const routeMap: {[key: string]: Route} = {
-  top: {
-    path: '/',
-    name: 'TOP',
+  planningPoker: {
+    path: '/planning-poker',
+    name: 'プランニングポーカー'
   },
   timer: {
     path: '/timer',
     name: 'タイマー'
-  },
-  planningPoker: {
-    path: '/planning-poker',
-    name: 'プランニングポーカー'
   },
   // householdAccount: {
   //   path: '/household-account',

@@ -1,7 +1,6 @@
+import { routeMap } from '@/app/routes'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return (
-    <main>
-    </main>
-  )
+  redirect(routeMap.planningPoker.path)
 }

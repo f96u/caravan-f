@@ -4,6 +4,7 @@
 import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
 import { routes } from '@/app/routes'
 import { AuthButton } from '@/app/components/Navigation/components/AuthButton'
+import { usePathname } from 'next/navigation'
 
 const MOBILE_MENU_HEIGHT_FALL_BACK = 2000
 
@@ -13,7 +14,6 @@ const getHeight = (elementRef: RefObject<HTMLDivElement>) => {
 }
 
 export const MobileMenu = () => {
-  const currentPathname = window.location.pathname
   const [mobileMenuState, setMobileMenuState] = useState({
     show: false,
     enableAnimate: false,
@@ -21,6 +21,7 @@ export const MobileMenu = () => {
   })
 
   const mobileMenuElementRef = useRef<HTMLDivElement>(null)
+  const pathname = usePathname()
 
   useEffect(() => {
     setMobileMenuState(prev => ({ ...prev, enableAnimate: false, height: getHeight(mobileMenuElementRef) }))
@@ -77,8 +78,8 @@ export const MobileMenu = () => {
               <a
                 key={route.path}
                 href={route.path}
-                className={`block rounded-md px-3 py-2 text-base font-medium ${route.path === currentPathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`}
-                { ...(route.path === currentPathname ? { "aria-current": "page" } : {}) }
+                className={`block rounded-md px-3 py-2 text-base font-medium ${route.path === pathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`}
+                { ...(route.path === pathname ? { "aria-current": "page" } : {}) }
               >
                 {route.name}
               </a>
