@@ -1,10 +1,7 @@
 import { Navigation } from '@/app/components/Navigation'
 import { routeMap } from '@/app/routes'
+import { redirect } from 'next/navigation'
 
 export default function Home() {
-  return (
-    <main>
-      <Navigation currentPathname={routeMap.top.path} />
-    </main>
-  )
+  redirect(routeMap.planningPoker.path)
 }
