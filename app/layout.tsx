@@ -8,6 +8,7 @@ import React from 'react'
 import { ToastProvider } from '@/app/context/ToastContext'
 import { UserProvider } from '@/app/Provider/UserProvider'
 import { UserObserver } from '@/app/components/UserObserver'
+import PrelineScript from '@/app/components/PrelineScript'
 
 const zenKakuGothicAntique = Zen_Kaku_Gothic_Antique({ weight: '400', subsets: ['latin'] })
 
@@ -33,6 +34,7 @@ export default function RootLayout({
       </UserProvider>
       </body>
       <GoogleAnalytics gaId="G-BTDWXL1FC2" />
+      <PrelineScript />
     </html>
   )
 }
