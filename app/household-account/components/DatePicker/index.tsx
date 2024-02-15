@@ -2,7 +2,7 @@ const Months = ({ year, month }: { year: number; month: number }) => (
   <div className="mx-1.5 grid grid-cols-5 items-center gap-x-3 pb-3">
       <div className="col-span-1">
         <button type="button" className="flex size-8 items-center justify-center rounded-full text-gray-800 hover:bg-gray-100 disabled:pointer-events-none disabled:opacity-50">
-          <svg className="size-4 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          <svg className="size-4 shrink-0" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
         </button>
       </div>
       <div className="col-span-3 flex items-center justify-center gap-x-1">
@@ -16,7 +16,7 @@ const Months = ({ year, month }: { year: number; month: number }) => (
             "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"flex-shrink-0 size-3.5 text-gray-800\" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>"
           }' className="hidden">
             {Array.from({ length: 12 }).map((_, idx) => (
-              <option value={idx} selected={idx === month}>{idx + 1}月</option>
+              <option key={idx} value={idx} selected={idx === month}>{idx + 1}月</option>
             ))}
           </select>
         </div>
@@ -31,7 +31,7 @@ const Months = ({ year, month }: { year: number; month: number }) => (
             "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"hidden hs-selected:block\"><svg class=\"flex-shrink-0 size-3.5 text-gray-800\" xmlns=\"http:.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><polyline points=\"20 6 9 17 4 12\"/></svg></span></div>"
           }' className="hidden">
             {Array.from({ length: 3 }).map((_, idx) => (
-              <option selected={year === idx + 2023}>{idx + 2023}</option>
+              <option key={idx} selected={year === idx + 2023}>{idx + 2023}</option>
             ))}
           </select>
         </div>
@@ -65,32 +65,32 @@ const Days = ({ year, month }: { year: number; month: number}) => {
   const endDate = new Date(year, month + 1,  0) // 月の最後の日を取得
    // 前月の最後の日の情報
    // 前月の末日
-  const weeks = (weekNum: number ) => Array.from({ length: 7 }).map((_, idx) => {
+  const weeks = (weekNum: number ): { day: number, isThisMonth: boolean }[] => Array.from({ length: 7 }).map((_, idx) => {
     // NOTE: 第1周目の処理
     if (weekNum === 0) {
       if (idx >= startDay) {
-        return idx - startDay + 1
+        return { day: idx -startDay + 1, isThisMonth: true }
       } else {
         // NOTE: 前月の日を表示する
-        return new Date(year, month, 0).getDate() - startDay + idx + 1
+        return { day: new Date(year, month, 0).getDate() - startDay + idx + 1, isThisMonth: false}
       }
     }
     // NOTE: 第2週目以降の処理
     const oneDay = idx - startDay + 1 + (7 * weekNum)
     if (oneDay > endDate.getDate()) {
       // NOTE: 次月の表示をする
-      return oneDay - endDate.getDate()
+      return { day: oneDay -endDate.getDate(), isThisMonth: false }
     }
-    return oneDay
+    return { day: oneDay, isThisMonth: true }
   })
 
   return (
     <>
       {Array.from({ length: 6 }).map((_, weekNum) => (
         <div key={weekNum} className="flex">
-          {weeks(weekNum).map(day => (
+          {weeks(weekNum).map(({ day, isThisMonth }) => (
             <div key={day}>
-              <button type="button" className="m-px flex size-10 items-center justify-center rounded-full border border-transparent text-sm text-gray-800 hover:border-blue-600 hover:text-blue-600 disabled:pointer-events-none disabled:text-gray-300 dark:text-gray-200 dark:hover:border-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:disabled:text-gray-600" disabled>
+              <button disabled={!isThisMonth} type="button" className="m-px flex size-10 items-center justify-center rounded-full border border-transparent text-sm text-gray-800 hover:border-blue-600 hover:text-blue-600 disabled:pointer-events-none disabled:text-gray-300">
                 {day}
               </button>
             </div>
