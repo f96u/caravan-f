@@ -43,7 +43,7 @@ const Months = () => (
 
 const Weeks = () => (
   <div className="flex pb-1.5">
-    {['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'].map(day => (
+    {['日', '月', '火', '水', '木', '金', '土'].map(day => (
       <span key={day} className="m-px block w-10 text-center text-sm text-gray-500">
         {day}
       </span>
@@ -51,30 +51,63 @@ const Weeks = () => (
   </div>
 )
 
-const Days = ({ weeks }: {weeks: number[]}) => (
-  <div className="flex">
-    {weeks.map(day => (
-      <div key={day}>
-        <button type="button" className="m-px flex size-10 items-center justify-center rounded-full border border-transparent text-sm text-gray-800 hover:border-blue-600 hover:text-blue-600 disabled:pointer-events-none disabled:text-gray-300 dark:text-gray-200 dark:hover:border-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:disabled:text-gray-600" disabled>
-          {day}
-        </button>
-      </div>
-    ))}
-  </div>
-)
+/**
+ * 指定されたyearとmonthからカレンダーを表示する
+ * @param year 年を示す。2024など
+ * @param month 月を示す0から11の数字
+ * @constructor
+ */
+const Days = ({ year, month }: { year: number; month: number}) => {
+  const startDay = new Date(year, month, 1).getDay() // 月の最初の日の曜日を取得
+  const endDate = new Date(year, month + 1,  0) // 月の最後の日を取得
+   // 前月の最後の日の情報
+   // 前月の末日
+  const weeks = (weekNum: number ) => Array.from({ length: 7 }).map((_, idx) => {
+    // NOTE: 第1周目の処理
+    if (weekNum === 0) {
+      if (idx >= startDay) {
+        return idx - startDay + 1
+      } else {
+        // NOTE: 前月の日を表示する
+        return new Date(year, month, 0).getDate() - startDay + idx + 1
+      }
+    }
+    // NOTE: 第2週目以降の処理
+    const oneDay = idx - startDay + 1 + (7 * weekNum)
+    if (oneDay > endDate.getDate()) {
+      // NOTE: 次月の表示をする
+      return oneDay - endDate.getDate()
+    }
+    return oneDay
+  })
+
+  return (
+    <>
+      {Array.from({ length: 6 }).map((_, weekNum) => (
+        <div key={weekNum} className="flex">
+          {weeks(weekNum).map(day => (
+            <div key={day}>
+              <button type="button" className="m-px flex size-10 items-center justify-center rounded-full border border-transparent text-sm text-gray-800 hover:border-blue-600 hover:text-blue-600 disabled:pointer-events-none disabled:text-gray-300 dark:text-gray-200 dark:hover:border-gray-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 dark:disabled:text-gray-600" disabled>
+                {day}
+              </button>
+            </div>
+          ))}
+        </div>
+      ))}
+    </>
+  )
+}
 
 export const DatePicker = () => {
+  const date = new Date()
+  const year = date.getFullYear()
+  const month = date.getMonth()
   return (
     <>
       <div className="grid justify-items-center space-y-0.5">
         <Months />
         <Weeks />
-        <Days weeks={[26, 27, 28, 29, 30, 1, 2]} />
-        <Days weeks={[3, 4, 5, 6, 7, 8, 9]} />
-        <Days weeks={[10, 11, 12, 13, 14, 15, 16]} />
-        <Days weeks={[17, 18, 19, 20, 21, 22, 23]} />
-        <Days weeks={[24, 25, 26, 27, 28, 29, 30]} />
-        <Days weeks={[31, 1, 2, 3, 4, 5, 6]} />
+        <Days year={year} month={month} />
       </div>
 
     </>
