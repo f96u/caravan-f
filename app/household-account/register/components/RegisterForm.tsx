@@ -4,6 +4,13 @@ import { Input } from '@/app/components/Input'
 import { useState } from 'react'
 import { DatePicker } from '@/app/household-account/components/DatePicker'
 import { CalendarDate } from '@/app/household-account/components/DatePicker/types/CalendarDate'
+import { ItemAmountComb } from '@/app/firestore/journal/documentData'
+
+type EditItemAmountComb = Omit<ItemAmountComb, 'amount'> & { amount: number | null }
+const initEditItemAmountComp: EditItemAmountComb = {
+  item: '',
+  amount: null,
+}
 
 const currentDate = new Date()
 
@@ -14,10 +21,8 @@ export const RegisterForm = () => {
     date: currentDate.getDate(),
   })
   const [describe, setDescribe] = useState('')
-  const [debit, setDebit] = useState('')
-  const [credit, setCredit] = useState('')
-  const [debitAmount, setDebitAmount] = useState('')
-  const [creditAmount, setCreditAmount] = useState('')
+  const [debit, setDebit] = useState<EditItemAmountComb[]>([initEditItemAmountComp])
+  const [credit, setCredit] = useState<EditItemAmountComb[]>([initEditItemAmountComp])
 
   return (
     <div className="sm:flex">
@@ -25,14 +30,50 @@ export const RegisterForm = () => {
       <div className="flex flex-1 flex-col gap-1">
         <Input placeholder="摘要" value={describe} onChange={event => setDescribe(event.target.value)} />
         <div className="flex flex-col gap-1 md:flex-row">
-          <div className="flex gap-1">
-            <Input placeholder="借方" value={debit} onChange={event => setDebit(event.target.value)} />
-            <Input className="max-w-32" placeholder="金額" value={debitAmount} onChange={event => setDebitAmount(event.target.value)} type="number" />
-          </div>
-          <div className="flex gap-1">
-            <Input placeholder="貸方" value={credit} onChange={event => setCredit(event.target.value)} />
-            <Input className="max-w-32" placeholder="金額" value={creditAmount} onChange={event => setCreditAmount(event.target.value)} type="number" />
-          </div>
+          {debit.map((comb, idx) => (
+            <div key={idx} className="flex gap-1">
+              <Input
+                placeholder="借方"
+                value={comb.item}
+                onChange={event =>
+                  setDebit(prev =>
+                    prev.map((prevComb, prevIdx) =>
+                      prevIdx === idx ? { ...prevComb, item: event.target.value } : prevComb))}
+              />
+              <Input
+                className="max-w-32"
+                placeholder="金額"
+                value={comb.amount ?? ''}
+                onChange={event =>
+                  setDebit(prev =>
+                    prev.map((prevComb, prevIdx) =>
+                      prevIdx === idx ? { ...prevComb, amount: Number(event.target.value) } : prevComb))}
+                type="number"
+              />
+            </div>
+          ))}
+          {credit.map((comb, idx) => (
+            <div key={idx} className="flex gap-1">
+              <Input
+                placeholder="貸方"
+                value={comb.item}
+                onChange={event =>
+                  setCredit(prev =>
+                    prev.map((prevComb, prevIdx) =>
+                      prevIdx === idx ? { ...prevComb, item: event.target.value } : prevComb))}
+              />
+              <Input
+                className="max-w-32"
+                placeholder="金額"
+                value={comb.amount ?? ''}
+                onChange={event =>
+                  setCredit(prev =>
+                    prev.map((prevComb, prevIdx) =>
+                      prevIdx === idx ? { ...prevComb, amount: Number(event.target.value) } : prevComb))}
+                type="number"
+              />
+            </div>
+          ))}
         </div>
       </div>
     </div>
