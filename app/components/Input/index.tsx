@@ -1,9 +1,10 @@
 import React from 'react'
 
 type Props = React.InputHTMLAttributes<HTMLInputElement>
-export const Input = ({ ...rest }: Props) => (
+
+export const Input = ({ className, ...rest }: Props) => (
   <input
     { ...rest }
-    className="rounded-sm px-2 py-1 outline-0 ring-1 ring-sub focus:ring-2 focus:ring-main"
+    className={`block w-full rounded-lg border-gray-200 px-4 py-3 text-sm focus:border-blue-500 focus:ring-blue-500 disabled:pointer-events-none disabled:opacity-50 ${className}`}
   />
 )
