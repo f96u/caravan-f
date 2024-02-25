@@ -4,8 +4,9 @@ import { Input } from '@/app/components/Input'
 import { useState } from 'react'
 import { DatePicker } from '@/app/household-account/components/DatePicker'
 import { CalendarDate } from '@/app/household-account/components/DatePicker/types/CalendarDate'
-import { ItemAmountComb } from '@/app/firestore/journal/documentData'
+import { DocumentData, initDocumentData, ItemAmountComb } from '@/app/firestore/journal/documentData'
 import { Button } from '@/app/components/Button'
+import { useJournal } from '@/app/household-account/hooks/useJournal'
 
 type EditItemAmountComb = Omit<ItemAmountComb, 'amount'> & { amount: number | null }
 const initEditItemAmountComp: EditItemAmountComb = {
@@ -16,12 +17,13 @@ const initEditItemAmountComp: EditItemAmountComb = {
 const currentDate = new Date()
 
 export const RegisterForm = () => {
+  const { register } = useJournal()
   const [calendarDate, setCalendarDate] = useState<CalendarDate>({
     year: currentDate.getFullYear(),
     month: currentDate.getMonth(),
     date: currentDate.getDate(),
   })
-  const [describe, setDescribe] = useState('')
+  const [description, setDescription] = useState('')
   const [debit, setDebit] = useState<EditItemAmountComb[]>([initEditItemAmountComp])
   const [credit, setCredit] = useState<EditItemAmountComb[]>([initEditItemAmountComp])
 
@@ -30,11 +32,47 @@ export const RegisterForm = () => {
     setCredit(prevState => prevState.concat([initEditItemAmountComp]))
   }
 
+  const validSubmit = () => {
+    // NOTE: 全てのamountに数値が入っている
+    if (debit.some(comb => comb.item !== '' && comb.amount === null)) {
+      return false
+    }
+    // NOTE: 同じitem名が登録されていない
+    const itemArray = debit.map(comb => comb.item).concat(credit.map(comb => comb.item))
+    if (itemArray.length !== new Set(itemArray).size) {
+      return false
+    }
+    // NOTE: debit, creditのamountが同値
+    const sumDebit = debit.map(comb => comb.amount ?? 0).reduce((acc, cur) => acc + cur, 0)
+    const sumCredit = credit.map(comb => comb.amount ?? 0).reduce((acc, cur) => acc + cur, 0)
+    return sumDebit === sumCredit;
+  }
+
+  const submit = () => {
+    const fixDebit: ItemAmountComb[] = debit.map(comb => ({
+      item: comb.item,
+      amount: comb.amount ?? 0
+    }))
+
+    const fixCredit: ItemAmountComb[] = credit.map(comb => ({
+      item: comb.item,
+      amount: comb.amount ?? 0
+    }))
+    const entry: DocumentData = {
+      ...initDocumentData,
+      date: new Date(calendarDate.year, calendarDate.month, calendarDate.date),
+      debit: fixDebit,
+      credit: fixCredit,
+      description,
+    }
+    register(entry)
+  }
+
   return (
     <div className="sm:flex">
       <DatePicker calendarDate={calendarDate} onChange={cDate => setCalendarDate(cDate)} />
       <div className="flex flex-1 flex-col gap-1">
-        <Input placeholder="摘要" value={describe} onChange={event => setDescribe(event.target.value)} />
+        <Input placeholder="摘要" value={description} onChange={event => setDescription(event.target.value)} />
         <div className="flex flex-col gap-1">
           {Array.from({ length: debit.length }).map((_, idx) => (
             <div key={idx} className="flex flex-col lg:flex-row">
@@ -82,6 +120,7 @@ export const RegisterForm = () => {
           ))}
         </div>
         <Button onClick={addComb}>+</Button>
+        <Button onClick={submit} disabled={!validSubmit()}>登録</Button>
       </div>
     </div>
   )
