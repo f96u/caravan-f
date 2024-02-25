@@ -1,4 +1,4 @@
-export default function HouseholdAccount({ children }: { children: React.ReactNode }) {
+export default function HouseholdAccountLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="m-4">
       {children}

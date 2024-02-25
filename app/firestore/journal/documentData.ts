@@ -7,7 +7,7 @@ export type ItemAmountComb = {
 }
 
 export type DocumentData = {
-  date: number
+  date: Date
   debit: ItemAmountComb[]
   credit: ItemAmountComb[]
   stamps: string[]
@@ -24,7 +24,7 @@ export const initItemAmountComb: ItemAmountComb = {
 }
 
 export const initDocumentData: DocumentData = {
-  date: new Date().getTime(),
+  date: new Date(),
   debit: [],
   credit: [],
   stamps: [],
@@ -36,7 +36,7 @@ export const initDocumentData: DocumentData = {
 }
 
 const fallbackData: DocumentData = {
-  date: new Date().getTime(),
+  date: new Date(),
   debit: [],
   credit: [],
   stamps: [],
