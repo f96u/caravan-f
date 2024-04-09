@@ -1,17 +1,16 @@
 'use client'
 
 import React, { useContext, useEffect, useMemo, useRef } from 'react'
-import { useMe } from '@/app/hooks/useMe'
 import { Button } from '@/app/components/Button'
 import { PlayerState } from '@/app/firestore/room/documentData'
 import { BoardSurface } from '@/app/planning-poker/[rid]/components/PokerTable/components/BoardSurface'
 import { PocketCards } from '@/app/planning-poker/[rid]/components/PokerTable/components/PoketCard'
 import { useRoom } from '@/app/planning-poker/[rid]/hooks/useRoom'
 import { Nickname } from '@/app/planning-poker/[rid]/components/PokerTable/components/Nickname'
-import { RoomIdContext } from '@/app/planning-poker/[rid]/contexts/RoomContext'
+import { UserContext } from '@/app/context/UserContext'
 
 export const PokerTable = () => {
-  const { me } = useMe()
+  const user = useContext(UserContext)
   const {
     room,
     entry,
@@ -24,18 +23,18 @@ export const PokerTable = () => {
 
   //NOTE: 部屋に入室する
   useEffect(() => {
-    if (!me || initRef.current) {
+    if (!user || initRef.current) {
       return
     }
     initRef.current = true
-    entry(me.uid)
-  }, [entry, me])
+    entry(user.uid)
+  }, [entry, user])
 
   const submitNickname = async (nickname: string) => {
-    if (!me) {
+    if (!user) {
       return
     }
-    await setNickname(me.uid, nickname)
+    await setNickname(user.uid, nickname)
   }
 
   const handleActionButton = () => {
@@ -43,12 +42,12 @@ export const PokerTable = () => {
   }
 
   const myPlayerState = useMemo((): PlayerState | undefined => {
-    if (!room || !me || !(me.uid in room.players)) {
+    if (!room || !user || !(user.uid in room.players)) {
       return undefined
     } else {
-      return room.players[me.uid]
+      return room.players[user.uid]
     }
-  }, [me, room])
+  }, [user, room])
 
   const canShowdown = useMemo(() => {
     if (!room || Object.values(room.players).length < 2) {
@@ -57,7 +56,7 @@ export const PokerTable = () => {
     return Object.values(room.players).every(ps => ps.card !== null)
   }, [room])
 
-  return me ? (
+  return user ? (
     <>
       <BoardSurface>
         <Button className="h-fit w-full" onClick={handleActionButton} disabled={!canShowdown}>
@@ -65,7 +64,7 @@ export const PokerTable = () => {
         </Button>
         <Nickname nickname={myPlayerState?.nickname ?? ''} onSubmit={submitNickname} />
       </BoardSurface>
-      <PocketCards isReveal={!!room?.isReveal} selectCardId={myPlayerState?.card ?? null} onClick={cid => selectCard(me.uid, cid)} />
+      <PocketCards isReveal={!!room?.isReveal} selectCardId={myPlayerState?.card ?? null} onClick={cid => selectCard(user.uid, cid)} />
     </>
   ) : null
 }

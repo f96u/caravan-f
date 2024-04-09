@@ -1,18 +1,20 @@
 'use client'
-import { Dialog } from '@/app/components/Dialog'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Login } from '@/app/svg/Login'
 import { Dialog as HeadlessDialog } from '@headlessui/react'
 import { UserContext, UserDispatchContext } from '@/app/context/UserContext'
 import { Logout } from '@/app/svg/Logout'
-import { signInWithEmailAndPassword, signOut } from '@firebase/auth'
-import { auth } from '@/app/firebaseApp'
+import { getAuth, signInWithEmailAndPassword, signOut } from '@firebase/auth'
 import { Input } from '@/app/components/Input'
 import { Button } from '@/app/components/Button'
+import { app } from '@/app/lib/firebase/init'
+import { Dialog } from '@/app/components/Dialog'
+import { useToast } from '@/app/context/ToastContext'
 
 export const AuthButton = () => {
   const user = useContext(UserContext)
   const dispatch = useContext(UserDispatchContext)
+  const { showToast } = useToast()
   const [open, setOpen] = useState(false)
   const [isLoginForm, setIsLoginForm] = useState(false)
   const [email, setEmail] = useState('')
@@ -24,7 +26,7 @@ export const AuthButton = () => {
   }
 
   const login = () => {
-    signInWithEmailAndPassword(auth, email, password)
+    signInWithEmailAndPassword(getAuth(app), email, password)
       .then(userCredential => {
         // 登録完了
         const user = userCredential.user
@@ -33,11 +35,12 @@ export const AuthButton = () => {
       .catch(error => {
         const errorCode = error.code
         const errorMessage = error.message
+        showToast(`errorCode: ${errorCode} errorMessage: ${errorMessage}`, 'error')
       })
   }
 
   const logout = () => {
-    signOut(auth)
+    signOut(getAuth(app))
       .then(() => {
         dispatch({ type: 'logout' })
         setOpen(false)
@@ -74,7 +77,6 @@ export const AuthButton = () => {
             </div>
           </>
         ) : (
-
           <>
             <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
               <div className="sm:flex sm:items-start">
@@ -87,8 +89,8 @@ export const AuthButton = () => {
                   </HeadlessDialog.Title>
                   <div className="mt-2">
                     <div className="my-4 flex flex-col">
-                      ID:<Input type="email" value={email} onChange={e => setEmail(e.target.value)} />
-                      PASS:<Input type="password" value={password} onChange={e => setPassword(e.target.value)} />
+                      ID:<Input type="email" value={email} onChange={val => setEmail(val)} />
+                      PASS:<Input type="password" value={password} onChange={val => setPassword(val)} />
                     </div>
                   </div>
                 </div>

@@ -1,13 +1,14 @@
 import { DocumentSnapshot, FieldValue, serverTimestamp, Timestamp } from '@firebase/firestore'
 
-export type JournalOperation = 'registered' | 'deleted' | 'offset'
+export type JournalOperation = 'registered' | 'removed' | 'offset'
 export type ItemAmountComb = {
   item: string
-  amount: number
+  amount: number | null
 }
 
 export type DocumentData = {
-  date: number
+  documentId: string
+  date: Date
   debit: ItemAmountComb[]
   credit: ItemAmountComb[]
   stamps: string[]
@@ -24,19 +25,21 @@ export const initItemAmountComb: ItemAmountComb = {
 }
 
 export const initDocumentData: DocumentData = {
-  date: new Date().getTime(),
+  documentId: '',
+  date: new Date(),
   debit: [],
   credit: [],
   stamps: [],
   description: '',
   operation: 'registered',
-  version: '23.2.1',
+  version: '24.4.1',
   createdAt: serverTimestamp(),
   updatedAt: serverTimestamp(),
 }
 
 const fallbackData: DocumentData = {
-  date: new Date().getTime(),
+  documentId: '',
+  date: new Date(),
   debit: [],
   credit: [],
   stamps: [],
@@ -50,8 +53,8 @@ const fallbackData: DocumentData = {
 export const shapingData = (docSnap: DocumentSnapshot): DocumentData => {
   const docData = docSnap.data()
   switch(docData?.version) {
-    case '23.2.1':
-      return <DocumentData>{ ...fallbackData, ...docData }
+    case '24.4.1':
+      return <DocumentData>{ ...fallbackData, ...docData, date: docData.date.toDate(), documentId: docSnap.id }
     default:
       return fallbackData
   }

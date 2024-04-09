@@ -1,9 +1,9 @@
 'use client'
 import { useEffect, useRef } from 'react'
-import { doc } from '@firebase/firestore'
-import { db } from '@/app/firebaseApp'
+import { doc, getFirestore } from '@firebase/firestore'
 import { useFirestore } from '@/app/hooks/useFirestore'
 import { useRouter } from 'next/navigation'
+import { app } from '@/app/lib/firebase/init'
 
 type Props = {
   rid: string
@@ -27,7 +27,7 @@ export const CheckRoom: React.FC<Props> = ({ rid }) => {
       return
     }
     //NOTE: 部屋の存在チェック
-    const docRef = doc(db, 'room', rid)
+    const docRef = doc(getFirestore(app), 'room', rid)
     getDoc(docRef)
       .then(docSnap => {
         if (!docSnap.exists()) {

@@ -1,13 +1,13 @@
-# Prooject
-cravan-f
+# Caravan
 
-# Deploy
-Github Actionsでデプロイできるようになるまでの間はローカルでデプロイを実施する。
+# 開発
+## デプロイ
+`$npm run deploy`
+デプロイ先はこちら
+https://caravan-f.web.app/
 
-# Package Update
-パッケージのアップデート方法
-`npm-check-updates`を利用して`package.json`全体をアップデートできる。
-
-以下のコマンドを叩くことでアップデートできるライブラリを表示する。実際にアップデートする場合は`-u`オプションを選択する。
-`$ ncu`
-その後`$ npm install`をすることでライブラリをインストールする。
+## エミュレーター
+`$npm run emulators`
+エミュレーターのシード値は`/emulator-data`にある。これをインポートするように設定されている。
+起動中のemulator内部データのエクスポートは以下のコマンドを使う。
+`$firebase emulators:export ./emulator-data --project caravan-f`
