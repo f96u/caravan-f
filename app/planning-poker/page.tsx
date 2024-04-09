@@ -3,9 +3,9 @@ import { Rooms } from '@/app/planning-poker/components/Rooms'
 
 export default function PlanningPoker() {
   return (
-    <main>
+    <>
       <h1 className="my-10 text-center text-2xl">プランニングポーカー</h1>
       <Rooms />
-    </main>
+    </>
   )
 }

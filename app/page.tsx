@@ -1,6 +1,9 @@
-import { routeMap } from '@/app/routes'
-import { redirect } from 'next/navigation'
+import { RegisterForm } from '@/app/components/RegisterForm'
 
 export default function Home() {
-  redirect(routeMap.planningPoker.path)
+  return (
+    <>
+      <RegisterForm />
+    </>
+  );
 }

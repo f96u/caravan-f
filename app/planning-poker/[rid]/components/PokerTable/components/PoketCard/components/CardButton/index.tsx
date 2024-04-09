@@ -19,7 +19,7 @@ export default function CardButton({ id, children, selected, isLock, onClick }: 
       onClick={handleClick}
     >
       <Card selected={selected} clickable={!isLock}>
-      {children}
+        {children}
       </Card>
     </button>
   )

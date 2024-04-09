@@ -9,8 +9,8 @@ type Props = {
 export const Nickname = ({ nickname, onSubmit }: Props) => {
   const [draftNickname, setDraftNickname] = useState('')
   const [isEdit, setIsEdit] = useState(false)
-  const changeNickname = (event: React.ChangeEvent<HTMLInputElement> | undefined) => {
-    event && setDraftNickname(event.target.value)
+  const changeNickname = (val: string) => {
+    setDraftNickname(val)
   }
 
   const handleChange = () => {
